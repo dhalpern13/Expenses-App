@@ -10,11 +10,17 @@ import Foundation
 
 class Transaction {
     
-    date:Date
-    description:String
-    Amount:double
-    Payer:User
+    // MARK: Properties
     
+    var date: Date
+    
+    var description: String
+    
+    var amount: NSDecimalNumber
+    
+    init(date: Date, description: String, amount: NSDecimalNumber) {
+        self.date = date
+        self.description = description
+        self.amount = amount
+    }
 }
-
-
