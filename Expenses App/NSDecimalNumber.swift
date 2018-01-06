@@ -16,3 +16,7 @@ public func +(leftNumber: NSDecimalNumber, rightNumber: NSDecimalNumber) -> NSDe
 public func -(leftNumber: NSDecimalNumber, rightNumber: NSDecimalNumber) -> NSDecimalNumber {
     return leftNumber.subtracting(rightNumber)
 }
+
+public func /(leftNumber: NSDecimalNumber, rightNumber: NSDecimalNumber) -> NSDecimalNumber {
+    return leftNumber.dividing(by: rightNumber)
+}

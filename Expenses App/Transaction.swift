@@ -16,9 +16,9 @@ class Transaction {
     
     var description: String
     
-    var amount: NSDecimalNumber
+    var amount: Decimal
     
-    init(date: Date, description: String, amount: NSDecimalNumber) {
+    init(date: Date, description: String, amount: Decimal) {
         self.date = date
         self.description = description
         self.amount = amount

@@ -9,21 +9,35 @@
 import Foundation
 
 class User: Hashable {
-    var name:String
-    var userName:String
-    var individualTransactions = [String: Transaction]()
-    var sharedTransactions = [User: Transaction]()
+    var name: String
+    var userName: String
+    var individualTransactions = [String: [Transaction]]()
+    var sharedTransactions = [User: [ObservableTransaction]]()
     var hashValue: Int {
         return self.userName.hashValue
     }
     
-    init(name:String, userName:String) {
+    init(name: String, userName: String) {
         self.name = name
         self.userName = userName
     }
     
+    func addCategory(_ category: String) {
+        if individualTransactions[category] == nil {
+            individualTransactions[category] = []
+        }
+    }
+    
+    func addFriend(_ friend: User) {
+        if sharedTransactions[friend] == nil  {
+            sharedTransactions[friend] = []
+        }
+    }
+    
+    
+    
 }
 
-func ==(lhs:User, rhs:User) -> Bool {
+func ==(lhs: User, rhs: User) -> Bool {
     return lhs.userName == rhs.userName
 }
