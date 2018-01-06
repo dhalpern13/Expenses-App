@@ -12,7 +12,6 @@
 		65A36E3F2001403B00598783 /* ObservableTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E3E2001403B00598783 /* ObservableTransaction.swift */; };
 		65A36E412001406A00598783 /* SplitTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E402001406A00598783 /* SplitTransaction.swift */; };
 		65A36E432001565800598783 /* TransactionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E422001565800598783 /* TransactionFactory.swift */; };
-		9F3579D52001282D000FB75C /* NSDecimalNumber.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F3579D42001282D000FB75C /* NSDecimalNumber.swift */; };
 		9FEFCAF41FE5D18100905717 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFCAF31FE5D18100905717 /* AppDelegate.swift */; };
 		9FEFCAF61FE5D18100905717 /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFCAF51FE5D18100905717 /* FirstViewController.swift */; };
 		9FEFCAF81FE5D18100905717 /* SecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFCAF71FE5D18100905717 /* SecondViewController.swift */; };
@@ -46,7 +45,6 @@
 		65A36E3E2001403B00598783 /* ObservableTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableTransaction.swift; sourceTree = "<group>"; };
 		65A36E402001406A00598783 /* SplitTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitTransaction.swift; sourceTree = "<group>"; };
 		65A36E422001565800598783 /* TransactionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFactory.swift; sourceTree = "<group>"; };
-		9F3579D42001282D000FB75C /* NSDecimalNumber.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSDecimalNumber.swift; sourceTree = "<group>"; };
 		9FEFCAF01FE5D18100905717 /* Expenses App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Expenses App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FEFCAF31FE5D18100905717 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9FEFCAF51FE5D18100905717 /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
@@ -123,7 +121,6 @@
 				65A36E422001565800598783 /* TransactionFactory.swift */,
 				65A36E3E2001403B00598783 /* ObservableTransaction.swift */,
 				65A36E402001406A00598783 /* SplitTransaction.swift */,
-				9F3579D42001282D000FB75C /* NSDecimalNumber.swift */,
 			);
 			path = "Expenses App";
 			sourceTree = "<group>";
@@ -286,7 +283,6 @@
 				65A36E3F2001403B00598783 /* ObservableTransaction.swift in Sources */,
 				65A36E412001406A00598783 /* SplitTransaction.swift in Sources */,
 				9FEFCAF41FE5D18100905717 /* AppDelegate.swift in Sources */,
-				9F3579D52001282D000FB75C /* NSDecimalNumber.swift in Sources */,
 				9FEFCAF61FE5D18100905717 /* FirstViewController.swift in Sources */,
 				6532F4981FF2E9C500A0FA7D /* Transaction.swift in Sources */,
 			);
