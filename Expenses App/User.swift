@@ -7,3 +7,23 @@
 //
 
 import Foundation
+
+class User: Hashable {
+    var name:String
+    var userName:String
+    var individualTransactions = [String: Transaction]()
+    var sharedTransactions = [User: Transaction]()
+    var hashValue: Int {
+        return self.userName.hashValue
+    }
+    
+    init(name:String, userName:String) {
+        self.name = name
+        self.userName = userName
+    }
+    
+}
+
+func ==(lhs:User, rhs:User) -> Bool {
+    return lhs.userName == rhs.userName
+}
