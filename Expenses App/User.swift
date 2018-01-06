@@ -32,6 +32,9 @@ class User: Hashable {
         if self.sharedTransactions[friend] == nil  {
             self.sharedTransactions[friend] = []
         }
+        if friend.sharedTransactions[self] == nil {
+            friend.sharedTransactions[self] = []
+        }
     }
     
     func addIndividualTransaction(date: Date, description: String, amount: Decimal, paidFor: Bool, category: String) {
