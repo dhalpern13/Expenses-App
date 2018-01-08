@@ -10,12 +10,18 @@ import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    
+    // MARK: Properties
 
     var window: UIWindow?
+    
+    var user: User?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        self.user = User(name: "John Smith", userName: "john.smith@icloud.com")
+        
         return true
     }
 
