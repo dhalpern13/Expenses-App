@@ -9,9 +9,17 @@
 import UIKit
 
 class SelectCategoryTableViewController: UITableViewController {
+    
+    self month: Month!
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        self.month = appDelegate.currentDate
+        
+        
+        loadTitle()
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -23,6 +31,37 @@ class SelectCategoryTableViewController: UITableViewController {
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    // MARK: Title
+    
+    func loadTitle() {
+        
+        let one = UILabel()
+        one.text = category
+        one.font = UIFont.systemFont(ofSize: 17)
+        one.sizeToFit()
+        
+        let two = UILabel()
+        two.text = "$" + user.getTotalExpensesInCategory(category).description
+        two.font = UIFont.systemFont(ofSize: 12)
+        two.textAlignment = .center
+        two.sizeToFit()
+        
+        
+        
+        let stackView = UIStackView(arrangedSubviews: [one, two])
+        stackView.distribution = .equalCentering
+        stackView.axis = .vertical
+        
+        let width = max(one.frame.size.width, two.frame.size.width)
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+        
+        one.sizeToFit()
+        two.sizeToFit()
+        
+        self.navigationItem.title = self.category
+        self.navigationItem.titleView = stackView
     }
 
     // MARK: - Table view data source

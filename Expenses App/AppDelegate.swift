@@ -9,7 +9,7 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, StoresUser, StoresDateFormatter, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: Properties
 
@@ -17,12 +17,16 @@ class AppDelegate: UIResponder, StoresUser, StoresDateFormatter, UIApplicationDe
     
     var user: User?
     var dateFormatter: DateFormatter?
+    var currentDate: Date?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.user = User(name: "John Smith", userName: "john.smith@icloud.com")
+        
         self.dateFormatter = DateFormatter()
         self.dateFormatter!.dateStyle = .long
+        
+        self.currentDate = Date()
         
         return true
     }
