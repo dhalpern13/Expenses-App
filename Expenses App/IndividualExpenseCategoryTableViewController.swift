@@ -11,7 +11,6 @@ import UIKit
 class IndividualExpenseCategoryTableViewController: UITableViewController {
     
     // MARK: Properties
-    var user: User!
     var category: String!
     
     @IBOutlet weak var navigationItemForView: UINavigationItem!
@@ -49,16 +48,17 @@ class IndividualExpenseCategoryTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = "IndividualExpenseTableViewCell"
+        let cellIdentifier = "TransactionTableViewCell"
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? IndividualExpenseTableViewCell else {fatalError("The dequed cell is not an instance of IndividualExpenseTableViewCell")}
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? TransactionTableViewCell else {
+            fatalError("Cell was not of type TransactionTableViewCell")
+        }
         
-        // Bad, will need to be fixed.
         let transaction = user.individualTransactions[category]![indexPath.row].0
         
-        cell.transactionDescription.text = transaction.description
-        cell.transactionAmount.text = "$" + transaction.amount.description
-        cell.transactionDate.text = transaction.date.description
+        cell.descriptionLabel.text = transaction.description
+        cell.dateLabel.text = self.dateFormatter.string(from: transaction.date)
+        cell.amountLabel.text = "$" + transaction.amount.description
         
         return cell
     }

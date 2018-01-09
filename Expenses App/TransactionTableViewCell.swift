@@ -1,19 +1,20 @@
 //
-//  IndividualExpenseTableViewCell.swift
+//  TransactionTableViewCell.swift
 //  Expenses App
 //
-//  Created by Christopher Bantle on 2018-01-07.
+//  Created by Christopher Bantle on 2018-01-09.
 //  Copyright © 2018 Christopher Bantle and Daniel Halpern. All rights reserved.
 //
 
 import UIKit
 
-class IndividualExpenseTableViewCell: UITableViewCell {
+class TransactionTableViewCell: UITableViewCell {
     
     // MARK: Properties
-    @IBOutlet weak var transactionDescription: UILabel!
-    @IBOutlet weak var transactionDate: UILabel!
-    @IBOutlet weak var transactionAmount: UILabel!
+    @IBOutlet weak var amountLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()

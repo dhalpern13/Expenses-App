@@ -9,15 +9,9 @@
 import UIKit
 
 class SelectCategoryTableViewController: UITableViewController {
-    
-    var user: User!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let appDelegate = UIApplication.shared.delegate as! AppDelegate
-        
-        self.user = appDelegate.user!
         
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
@@ -44,15 +38,15 @@ class SelectCategoryTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cellIdentifier = "IndividualExpenseCategoryTableViewCell"
+        let cellIdentifier = "IndividualCategoryTableViewCell"
         
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? IndividualExpenseCategoryTableViewCell else {fatalError("The dequed cell is not an instance of IndividualExpenseCategoryTableViewCell")}
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+        
         let category = self.user.individualTransactionCategories[indexPath.row]
         
-        cell.categoryLabel.text = category
+        cell.textLabel!.text = category
         
-        cell.amountLabel.text = "$" + self.user.getTotalExpensesInCategory(category).description
+        cell.detailTextLabel!.text = "$" + self.user.getTotalExpensesInCategory(category).description
 
         return cell
     }
@@ -105,9 +99,6 @@ class SelectCategoryTableViewController: UITableViewController {
             let selectedCategory = self.user.individualTransactionCategories[selectedIndex.row]
             
             individualCategoryTableView.category = selectedCategory
-            
-            // This is a bit dicey.
-            individualCategoryTableView.user = self.user
         }
     }
 

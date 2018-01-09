@@ -9,18 +9,20 @@
 import UIKit
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, StoresUser, StoresDateFormatter, UIApplicationDelegate {
     
     // MARK: Properties
 
     var window: UIWindow?
     
     var user: User?
-
+    var dateFormatter: DateFormatter?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         self.user = User(name: "John Smith", userName: "john.smith@icloud.com")
+        self.dateFormatter = DateFormatter()
+        self.dateFormatter!.dateStyle = .long
         
         return true
     }
