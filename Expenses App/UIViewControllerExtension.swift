@@ -20,4 +20,8 @@ extension UIViewController {
         return appDelegate.dateFormatter!
     }
     
+    var currentDate: Date {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.currentDate!
+    }
 }

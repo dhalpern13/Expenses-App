@@ -9,6 +9,9 @@
 import Foundation
 
 class User: Hashable {
+    
+    // MARK: Properties
+    
     var name: String
     var userName: String
     var individualTransactions = [String: [(Transaction, Bool)]]()
@@ -17,6 +20,11 @@ class User: Hashable {
     var hashValue: Int {
         return self.userName.hashValue
     }
+    
+    // MARK: Garbage Properties
+    
+    var years = ["2018", "2017"]
+    var yearToMonths = ["2017": ["December"], "2018": ["January"]]
     
     init(name: String, userName: String) {
         self.name = name
@@ -125,6 +133,8 @@ class User: Hashable {
         return total
     }
     
+    // MARK: Garbage Methods
+    
     func renderDemo() {
         let date1 = Date(timeIntervalSince1970: 1000000000000)
         let date2 = Date(timeIntervalSince1970: 4000000000000)
@@ -139,7 +149,6 @@ class User: Hashable {
         self.addIndividualTransaction(date: date1, description: "Whole Foods", amount: amount3, paidFor: true, category: "Groceries")
         self.addIndividualTransaction(date: date2, description: "Loblaws", amount: amount4, paidFor: true, category: "Groceries")
     }
-    
 }
 
 func ==(lhs: User, rhs: User) -> Bool {

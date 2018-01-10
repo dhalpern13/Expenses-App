@@ -15,36 +15,16 @@ class IndividualExpenseCategoryTableViewController: UITableViewController {
     
     @IBOutlet weak var navigationItemForView: UINavigationItem!
     
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        loadTitle()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        navigationItemForView.title = category
     }
 
     // MARK: - Table view data source
-
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
-    }
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        
-        // Shouldn't be force unwrapping like this.
-        return user.individualTransactions[category]!.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -107,36 +87,4 @@ class IndividualExpenseCategoryTableViewController: UITableViewController {
         // Pass the selected object to the new view controller.
     }
     */
-
-    // MARK: Creating title
-    
-    // Code taken from: https://stackoverflow.com/questions/38626004/add-subtitle-under-the-title-in-navigation-bar-controller-in-xcode
-    func loadTitle() {
-        
-        let one = UILabel()
-        one.text = category
-        one.font = UIFont.systemFont(ofSize: 17)
-        one.sizeToFit()
-        
-        let two = UILabel()
-        two.text = "$" + user.getTotalExpensesInCategory(category).description
-        two.font = UIFont.systemFont(ofSize: 12)
-        two.textAlignment = .center
-        two.sizeToFit()
-        
-        
-        
-        let stackView = UIStackView(arrangedSubviews: [one, two])
-        stackView.distribution = .equalCentering
-        stackView.axis = .vertical
-        
-        let width = max(one.frame.size.width, two.frame.size.width)
-        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
-        
-        one.sizeToFit()
-        two.sizeToFit()
-        
-        self.navigationItem.title = self.category
-        self.navigationItem.titleView = stackView
-    }
 }
