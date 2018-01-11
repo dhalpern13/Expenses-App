@@ -58,20 +58,11 @@ class SelectCategoryTableViewController: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 3
     }
-    
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        switch section {
-        case 1:
-            return "Categories"
-        default:
-            return " "
-        }
-    }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch section {
         case 1:
-            return user.individualTransactionCategories.count
+            return user.yearToMonthsToCategoryToTransactions[year]![month]!.count
         default:
             return 1
         }
@@ -81,9 +72,9 @@ class SelectCategoryTableViewController: UITableViewController {
         let cellIdentifier = "IndividualCategoryTableViewCell"
         if indexPath.section == 1 {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-            let category = self.user.individualTransactionCategories[indexPath.row]
+            let category = self.user.categories[indexPath.row]
             cell.textLabel!.text = category
-            cell.detailTextLabel!.text = "$" + self.user.getTotalExpensesInCategory(category).description
+            cell.detailTextLabel!.text = "$1,000"
             return cell
         } else if indexPath.section == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
@@ -93,7 +84,7 @@ class SelectCategoryTableViewController: UITableViewController {
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
             cell.textLabel!.text = "Total"
-            cell.detailTextLabel!.text = "$1000"
+            cell.detailTextLabel!.text = "$1,100"
             return cell
         }
     }
@@ -123,17 +114,31 @@ class SelectCategoryTableViewController: UITableViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
-        if let individualCategoryTableView = segue.destination as? IndividualExpenseCategoryTableViewController {
-            let selectedIndex = tableView.indexPathForSelectedRow!
+        if let individualCategoryViewController = segue.destination as? IndividualExpenseCategoryTableViewController, let indexPath = tableView.indexPathForSelectedRow {
             
-            if selectedIndex.section == 1 {
-                let selectedCategory = self.user.individualTransactionCategories[selectedIndex.row]
-                individualCategoryTableView.category = selectedCategory
-            } else {
-                // Handle where the user selects the uncategorized expenses.  Needs to be fixed.
-                let selectedCategory = self.user.individualTransactionCategories[0]
-                individualCategoryTableView.category = selectedCategory
+            switch indexPath.section {
+            case 0:
+                individualCategoryViewController.category = "All Expenses"
+            case 1:
+                individualCategoryViewController.category = self.user.categories[indexPath.row]
+            case 2:
+                individualCategoryViewController.category = "Uncategorized"
+            default:
+                fatalError("There should not be a section with index \(indexPath.section) in this Table View.")
             }
+        }
+    }
+    
+    @IBAction func unwindToCategorySelection(sender: UIStoryboardSegue) {
+        if let sourceViewController = sender.source as? SelectMonthTableViewController, let month = sourceViewController.month, let year = sourceViewController.year {
+            self.month = month
+            self.year = year
+            self.tableView.reloadData()
+            loadTitle()
+        } else if sender.source is IndividualExpenseCategoryTableViewController {
+            // If the user added a new expense while in this view, other categories could have different totals, and there could be new categories, so it seems
+            // safest to just reload.
+            self.tableView.reloadData()
         }
     }
     
@@ -144,16 +149,6 @@ class SelectCategoryTableViewController: UITableViewController {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let controller = storyBoard.instantiateViewController(withIdentifier: "selectMonthTableViewController")
             self.present(controller, animated: true, completion: nil)
-        }
-    }
-    
-    @IBAction func unwindToCategorySelection(sender: UIStoryboardSegue) {
-        if let sourceViewController = sender.source as? SelectMonthTableViewController, let month = sourceViewController.month, let year = sourceViewController.year {
-            self.month = month
-            self.year = year
-            // Methods for loading data need to be changed to reference the values of month and year.
-            tableView.reloadData()
-            loadTitle()
         }
     }
 }

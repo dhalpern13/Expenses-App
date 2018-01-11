@@ -26,6 +26,10 @@ class IndividualExpenseCategoryTableViewController: UITableViewController {
     override func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 2
+    }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = "TransactionTableViewCell"
@@ -34,12 +38,11 @@ class IndividualExpenseCategoryTableViewController: UITableViewController {
             fatalError("Cell was not of type TransactionTableViewCell")
         }
         
-        let transaction = user.individualTransactions[category]![indexPath.row].0
-        
+        let transaction = user.yearToMonthsToCategoryToTransactions["2018"]!["January"]![category]![indexPath.row]
         cell.descriptionLabel.text = transaction.description
-        cell.dateLabel.text = self.dateFormatter.string(from: transaction.date)
-        cell.amountLabel.text = "$" + transaction.amount.description
-        
+        cell.dateLabel.text = transaction.date
+        cell.amountLabel.text = transaction.amount
+            
         return cell
     }
 

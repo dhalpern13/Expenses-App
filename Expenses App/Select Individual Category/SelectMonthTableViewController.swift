@@ -39,8 +39,18 @@ class SelectMonthTableViewController: UITableViewController {
     }
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.year = self.user.years[indexPath.section]
-        self.month = self.user.yearToMonths[year!]![indexPath.row]
         self.presentingViewController?.dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if sender is UITableViewCell, let indexPath = self.tableView.indexPathForSelectedRow {
+            self.year = self.user.years[indexPath.section]
+            self.month = self.user.yearToMonths[year!]![indexPath.row]
+        }
+        
     }
 }

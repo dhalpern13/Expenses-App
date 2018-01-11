@@ -12,17 +12,19 @@
 		65A36E3F2001403B00598783 /* ObservableTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E3E2001403B00598783 /* ObservableTransaction.swift */; };
 		65A36E412001406A00598783 /* SplitTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E402001406A00598783 /* SplitTransaction.swift */; };
 		65A36E432001565800598783 /* TransactionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E422001565800598783 /* TransactionFactory.swift */; };
+		9F2319332006E41E003FB444 /* DemoTransaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2319322006E41E003FB444 /* DemoTransaction.swift */; };
+		9F2319372006F05E003FB444 /* AddTransactionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */; };
+		9F2319392006F0FC003FB444 /* WhoRecievedPaymentSegmentControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2319382006F0FC003FB444 /* WhoRecievedPaymentSegmentControllerTableViewCell.swift */; };
+		9F2EC08D2006FBF000185C86 /* AmountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2EC08C2006FBF000185C86 /* AmountTableViewCell.swift */; };
 		9F84FFCF20051D4E00AAE9D6 /* UIViewControllerExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFCE20051D4E00AAE9D6 /* UIViewControllerExtension.swift */; };
 		9F84FFD5200535F400AAE9D6 /* TransactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFD4200535F400AAE9D6 /* TransactionTableViewCell.swift */; };
 		9F84FFDC2005819F00AAE9D6 /* SelectMonthTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFDB2005819F00AAE9D6 /* SelectMonthTableViewController.swift */; };
 		9F84FFE42005B7FA00AAE9D6 /* DatePickerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFE32005B7FA00AAE9D6 /* DatePickerTableViewCell.swift */; };
-		9F84FFE62005B93300AAE9D6 /* DateTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFE52005B93300AAE9D6 /* DateTableViewCell.swift */; };
 		9F84FFE82005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFE72005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift */; };
 		9F84FFEC2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFEB2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift */; };
-		9F84FFEE2005BF7D00AAE9D6 /* CategoryTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFED2005BF7D00AAE9D6 /* CategoryTableViewCell.swift */; };
+		9F84FFEE2005BF7D00AAE9D6 /* CategoryOrFriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFED2005BF7D00AAE9D6 /* CategoryOrFriendTableViewCell.swift */; };
 		9FA133062002EBFE001CCE5A /* SelectCategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA133052002EBFE001CCE5A /* SelectCategoryTableViewController.swift */; };
 		9FA1330A2002F713001CCE5A /* IndividualExpenseCategoryTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA133092002F713001CCE5A /* IndividualExpenseCategoryTableViewController.swift */; };
-		9FA1330C2002FD38001CCE5A /* AddNewExpenseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FA1330B2002FD38001CCE5A /* AddNewExpenseViewController.swift */; };
 		9FEFCAF41FE5D18100905717 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FEFCAF31FE5D18100905717 /* AppDelegate.swift */; };
 		9FEFCAFB1FE5D18100905717 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9FEFCAF91FE5D18100905717 /* Main.storyboard */; };
 		9FEFCAFD1FE5D18100905717 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 9FEFCAFC1FE5D18100905717 /* Assets.xcassets */; };
@@ -54,17 +56,19 @@
 		65A36E3E2001403B00598783 /* ObservableTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ObservableTransaction.swift; sourceTree = "<group>"; };
 		65A36E402001406A00598783 /* SplitTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitTransaction.swift; sourceTree = "<group>"; };
 		65A36E422001565800598783 /* TransactionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFactory.swift; sourceTree = "<group>"; };
+		9F2319322006E41E003FB444 /* DemoTransaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTransaction.swift; sourceTree = "<group>"; };
+		9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionTableViewController.swift; sourceTree = "<group>"; };
+		9F2319382006F0FC003FB444 /* WhoRecievedPaymentSegmentControllerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhoRecievedPaymentSegmentControllerTableViewCell.swift; sourceTree = "<group>"; };
+		9F2EC08C2006FBF000185C86 /* AmountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFCE20051D4E00AAE9D6 /* UIViewControllerExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewControllerExtension.swift; sourceTree = "<group>"; };
 		9F84FFD4200535F400AAE9D6 /* TransactionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFDB2005819F00AAE9D6 /* SelectMonthTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMonthTableViewController.swift; sourceTree = "<group>"; };
 		9F84FFE32005B7FA00AAE9D6 /* DatePickerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatePickerTableViewCell.swift; sourceTree = "<group>"; };
-		9F84FFE52005B93300AAE9D6 /* DateTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFE72005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentExpenseSegmentControllerTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFEB2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentRecipientTableViewCell.swift; sourceTree = "<group>"; };
-		9F84FFED2005BF7D00AAE9D6 /* CategoryTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableViewCell.swift; sourceTree = "<group>"; };
+		9F84FFED2005BF7D00AAE9D6 /* CategoryOrFriendTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryOrFriendTableViewCell.swift; sourceTree = "<group>"; };
 		9FA133052002EBFE001CCE5A /* SelectCategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCategoryTableViewController.swift; sourceTree = "<group>"; };
 		9FA133092002F713001CCE5A /* IndividualExpenseCategoryTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndividualExpenseCategoryTableViewController.swift; sourceTree = "<group>"; };
-		9FA1330B2002FD38001CCE5A /* AddNewExpenseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddNewExpenseViewController.swift; sourceTree = "<group>"; };
 		9FEFCAF01FE5D18100905717 /* Expenses App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Expenses App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		9FEFCAF31FE5D18100905717 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9FEFCAFA1FE5D18100905717 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -104,6 +108,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9F23193A2006F1BE003FB444 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				9F84FFE32005B7FA00AAE9D6 /* DatePickerTableViewCell.swift */,
+				9F2319382006F0FC003FB444 /* WhoRecievedPaymentSegmentControllerTableViewCell.swift */,
+				9F2EC08C2006FBF000185C86 /* AmountTableViewCell.swift */,
+				9F84FFE72005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift */,
+				9F84FFEB2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift */,
+				9F84FFED2005BF7D00AAE9D6 /* CategoryOrFriendTableViewCell.swift */,
+			);
+			path = Cells;
+			sourceTree = "<group>";
+		};
 		9F84FFDD2005AAB500AAE9D6 /* Select Individual Category */ = {
 			isa = PBXGroup;
 			children = (
@@ -129,22 +146,17 @@
 				6532F4971FF2E9C500A0FA7D /* Transaction.swift */,
 				65A36E402001406A00598783 /* SplitTransaction.swift */,
 				65A36E422001565800598783 /* TransactionFactory.swift */,
-				6532F4951FF2E9AD00A0FA7D /* User.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
 		};
-		9F84FFE22005AB4600AAE9D6 /* Add New Expense */ = {
+		9F84FFE22005AB4600AAE9D6 /* Add New Transaction */ = {
 			isa = PBXGroup;
 			children = (
-				9FA1330B2002FD38001CCE5A /* AddNewExpenseViewController.swift */,
-				9F84FFE32005B7FA00AAE9D6 /* DatePickerTableViewCell.swift */,
-				9F84FFE52005B93300AAE9D6 /* DateTableViewCell.swift */,
-				9F84FFE72005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift */,
-				9F84FFEB2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift */,
-				9F84FFED2005BF7D00AAE9D6 /* CategoryTableViewCell.swift */,
+				9F23193A2006F1BE003FB444 /* Cells */,
+				9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */,
 			);
-			path = "Add New Expense";
+			path = "Add New Transaction";
 			sourceTree = "<group>";
 		};
 		9FEFCAE71FE5D18000905717 = {
@@ -170,6 +182,8 @@
 		9FEFCAF21FE5D18100905717 /* Expenses App */ = {
 			isa = PBXGroup;
 			children = (
+				9F2319322006E41E003FB444 /* DemoTransaction.swift */,
+				6532F4951FF2E9AD00A0FA7D /* User.swift */,
 				9F84FFE02005AAFE00AAE9D6 /* Model */,
 				9F84FFDD2005AAB500AAE9D6 /* Select Individual Category */,
 				9F84FFDF2005AAE700AAE9D6 /* View Individual Transactions */,
@@ -178,7 +192,7 @@
 				9FEFCAFC1FE5D18100905717 /* Assets.xcassets */,
 				9FEFCAFE1FE5D18100905717 /* LaunchScreen.storyboard */,
 				9FEFCB011FE5D18100905717 /* Info.plist */,
-				9F84FFE22005AB4600AAE9D6 /* Add New Expense */,
+				9F84FFE22005AB4600AAE9D6 /* Add New Transaction */,
 				9F84FFCE20051D4E00AAE9D6 /* UIViewControllerExtension.swift */,
 			);
 			path = "Expenses App";
@@ -337,22 +351,24 @@
 			buildActionMask = 2147483647;
 			files = (
 				9F84FFE82005B9E600AAE9D6 /* PaymentExpenseSegmentControllerTableViewCell.swift in Sources */,
-				9FA1330C2002FD38001CCE5A /* AddNewExpenseViewController.swift in Sources */,
+				9F2319372006F05E003FB444 /* AddTransactionTableViewController.swift in Sources */,
 				9F84FFEC2005BD0000AAE9D6 /* PaymentRecipientTableViewCell.swift in Sources */,
+				9F2319332006E41E003FB444 /* DemoTransaction.swift in Sources */,
 				9FA133062002EBFE001CCE5A /* SelectCategoryTableViewController.swift in Sources */,
 				9F84FFCF20051D4E00AAE9D6 /* UIViewControllerExtension.swift in Sources */,
 				9FA1330A2002F713001CCE5A /* IndividualExpenseCategoryTableViewController.swift in Sources */,
 				9F84FFD5200535F400AAE9D6 /* TransactionTableViewCell.swift in Sources */,
 				65A36E432001565800598783 /* TransactionFactory.swift in Sources */,
 				6532F4961FF2E9AD00A0FA7D /* User.swift in Sources */,
-				9F84FFE62005B93300AAE9D6 /* DateTableViewCell.swift in Sources */,
 				65A36E3F2001403B00598783 /* ObservableTransaction.swift in Sources */,
 				9F84FFDC2005819F00AAE9D6 /* SelectMonthTableViewController.swift in Sources */,
 				65A36E412001406A00598783 /* SplitTransaction.swift in Sources */,
 				9FEFCAF41FE5D18100905717 /* AppDelegate.swift in Sources */,
+				9F2EC08D2006FBF000185C86 /* AmountTableViewCell.swift in Sources */,
 				9F84FFE42005B7FA00AAE9D6 /* DatePickerTableViewCell.swift in Sources */,
+				9F2319392006F0FC003FB444 /* WhoRecievedPaymentSegmentControllerTableViewCell.swift in Sources */,
 				6532F4981FF2E9C500A0FA7D /* Transaction.swift in Sources */,
-				9F84FFEE2005BF7D00AAE9D6 /* CategoryTableViewCell.swift in Sources */,
+				9F84FFEE2005BF7D00AAE9D6 /* CategoryOrFriendTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,11 +8,11 @@
 
 import UIKit
 
-class CategoryTableViewCell: UITableViewCell {
+class CategoryOrFriendTableViewCell: UITableViewCell {
     
     //MARK: Properties
-    
-    @IBOutlet weak var categoryTitle: UILabel!
+    @IBOutlet weak var categoryOrFriendLabel: UILabel!
+    @IBOutlet weak var amountTextEntry: UITextField!
     
     override func awakeFromNib() {
         super.awakeFromNib()

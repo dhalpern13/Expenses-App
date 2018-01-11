@@ -24,13 +24,25 @@ class User: Hashable {
     // MARK: Garbage Properties
     
     var years = ["2018", "2017"]
-    var yearToMonths = ["2017": ["December"], "2018": ["January"]]
+    var yearToMonths = ["2018":["January"], "2017":["December"]]
+    var categories = ["Travel", "Groceries"]
+    var yearToMonthsToCategoryToTransactions: [String: [String: [String: [DemoTransaction]]]]
     
     init(name: String, userName: String) {
         self.name = name
         self.userName = userName
         
-        renderDemo()
+        let transaction1 = DemoTransaction(date: "December 5, 2017", description: "Whole Foods", amount: "$69.99")
+        let transaction2 = DemoTransaction(date: "December 20, 2017", description: "Loblaws", amount: "47.07")
+        let transaction3 = DemoTransaction(date: "January 10, 2018", description: "Whole Foods", amount: "$93.46")
+        let transaction4 = DemoTransaction(date: "January 1, 2018", description: "Loblaws", amount: "$101.98")
+        let transaction5 = DemoTransaction(date: "December 5, 2017", description: "WestJet", amount: "$450.59")
+        let transaction6 = DemoTransaction(date: "December 20, 2017", description: "Sheraton Calgary", amount: "307.89")
+        let transaction7 = DemoTransaction(date: "January 2, 2018", description: "Air Canada", amount: "$1579.59")
+        let transaction8 = DemoTransaction(date: "January 7, 2018", description: "Four Seasons Tahiti", amount: "$567.89")
+        
+        self.yearToMonthsToCategoryToTransactions = ["2017": ["December":["Grocery": [transaction1, transaction2], "Travel": [transaction5, transaction6]]], "2018": ["January": ["Grocery": [transaction3, transaction4], "Travel": [transaction7, transaction8]]]]
+        
     }
     
     func addCategory(_ category: String) {
@@ -131,23 +143,6 @@ class User: Hashable {
             total += getTotalExpensesOfUser(user)
         }
         return total
-    }
-    
-    // MARK: Garbage Methods
-    
-    func renderDemo() {
-        let date1 = Date(timeIntervalSince1970: 1000000000000)
-        let date2 = Date(timeIntervalSince1970: 4000000000000)
-        
-        let amount1 = Decimal(907)
-        let amount2 = Decimal(753)
-        let amount3 = Decimal(101)
-        let amount4 = Decimal(65)
-        
-        self.addIndividualTransaction(date: date1, description: "Some Ski Resort in BC", amount: amount1, paidFor: true, category: "Travel")
-        self.addIndividualTransaction(date: date2, description: "Air Canada", amount: amount2, paidFor: true, category: "Travel")
-        self.addIndividualTransaction(date: date1, description: "Whole Foods", amount: amount3, paidFor: true, category: "Groceries")
-        self.addIndividualTransaction(date: date2, description: "Loblaws", amount: amount4, paidFor: true, category: "Groceries")
     }
 }
 

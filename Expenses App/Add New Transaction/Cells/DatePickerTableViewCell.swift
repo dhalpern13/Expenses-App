@@ -1,5 +1,5 @@
 //
-//  DateTableViewCell.swift
+//  DatePickerTableViewCell.swift
 //  Expenses App
 //
 //  Created by Christopher Bantle on 2018-01-09.
@@ -8,10 +8,10 @@
 
 import UIKit
 
-class DateTableViewCell: UITableViewCell {
+class DatePickerTableViewCell: UITableViewCell {
     
     // MARK: Properties
-    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var datePicker: UIDatePicker!
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -20,8 +20,5 @@ class DateTableViewCell: UITableViewCell {
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
-
 }
