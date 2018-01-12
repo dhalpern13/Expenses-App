@@ -8,9 +8,8 @@
 
 import Foundation
 
-class Transaction {
+class Transaction:Comparable{
     
-    // MARK: Properties
     
     var date: Date
     
@@ -18,9 +17,22 @@ class Transaction {
     
     var amount: Decimal
     
-    init(date: Date, description: String, amount: Decimal) {
+    var category: String
+    
+    init(date: Date, description: String, amount: Decimal, category: String) {
         self.date = date
         self.description = description
         self.amount = amount
+        self.category = category
     }
+    
+    static func ==(lhs: Transaction, rhs: Transaction) -> Bool {
+        return lhs.date == rhs.date
+    }
+    
+    static func <(lhs: Transaction, rhs: Transaction) -> Bool {
+        return lhs.date < rhs.date
+    }
+    
+    
 }

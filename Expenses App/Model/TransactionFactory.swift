@@ -10,15 +10,7 @@ import Foundation
 
 
 class TransactionFactory {
-    static func getIndvidualTransaction(date: Date, description: String, amount: Decimal) -> Transaction {
-        return Transaction(date: date, description: description, amount: amount)
-    }
-    
-    static func getDirectPayment(date: Date, description: String, amount: Decimal) -> ObservableTransaction {
-        return ObservableTransaction(date: date, description: description, amount: amount)
-    }
-    
-    static func getSplitPayment(date: Date, description: String, amount: Decimal, waysSplit: Int) -> SplitTransaction {
-        return SplitTransaction(date: date, description: description, amount: amount, waysSplit: waysSplit)
+    static func getTransaction(date: Date, description: String, amount: Decimal, category: String) -> Transaction {
+        return Transaction(date: date, description: description, amount: amount, category: category)
     }
 }
