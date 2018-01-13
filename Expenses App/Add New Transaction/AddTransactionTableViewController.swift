@@ -8,24 +8,27 @@
 
 import UIKit
 
-class AddOrEditTransactionTableViewController: UITableViewController, UITextFieldDelegate {
+protocol EditExpenseDelegate {
+    func didBeginEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction)
+    
+    func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction)
+}
+
+protocol AddExpenseDelegate {
+    func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?)
+}
+
+class AddOrEditTransactionTableViewController: UITableViewController, UITextFieldDelegate, SelectCategoryDelegate {
 
     // MARK: Properties
     
-    var transaction: DemoTransaction?
+    var addExpenseDelegate: AddExpenseDelegate?
     
-    var friendToSuggest: String?
+    var editExpenseDelegate: EditExpenseDelegate?
+    
+    var transaction: Transaction?
     
     var categoryToSuggest: String?
-    
-    var newExpenseMode = true {
-        didSet {
-            self.tableView.reloadSections([1, 2, 3, 4, 5], with: .automatic)
-            self.updateSaveButtonState()
-        }
-    }
-    
-    // MARK: Properties - For New Transaction
     
     var date: Date! {
         didSet {
@@ -33,182 +36,131 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    // MARK: Properties - For New Transaction, Expense-Specific
+    var transactionDescription: String?
     
-    var expenseDescriptionValid = false {
-        didSet {
-           self.updateSaveButtonState()
-        }
-    }
-    
-    var expenseDescription: String? {
-        didSet {
-            self.chooseDescriptionTableViewCell?.detailTextLabel?.text = self.expenseDescription
-            self.expenseDescriptionValid = self.expenseDescription != nil
-        }
-    }
-    
-    var categoriesAndAmountsValid = false {
-        didSet {
-            self.updateSaveButtonState()
-        }
-    }
-    
-    var categories: [String] {
+    var categoryIsValid: Bool {
         get {
-            return categoryToAmount.keys.sorted()
+            return self.category != nil
         }
     }
     
-    var categoryToAmount = [String: Decimal]() {
+    var category: String? {
         didSet {
-            self.categoriesAndAmountsValid = self.areCategoriesAndAmountsValid()
+            self.selectCategoryTableViewCell?.detailTextLabel?.text = category
+            self.updateSaveButtonState()
         }
     }
     
-    var friends: [String] {
+    var amountIsValid: Bool {
         get {
-            return friendToAmount.keys.sorted()
+            return self.amount != nil && self.amount! > 0
         }
     }
     
-    var friendToAmount = [String: Decimal]() {
-        didSet {
-            self.categoriesAndAmountsValid = self.areCategoriesAndAmountsValid()
-        }
-    }
-    
-    func areCategoriesAndAmountsValid() -> Bool {
-        if self.friendToAmount.count == 0 && self.categoryToAmount.count == 0 {
-            return false
-        } else {
-            if friendToAmount.count > 1 {
-                for friend in friendToAmount.keys {
-                    if friendToAmount[friend]! <= 0 {
-                        return false
-                    }
-                }
-            }
-            
-            if categoryToAmount.count > 1 {
-                for category in categoryToAmount.keys {
-                    if categoryToAmount[category]! <= 0 {
-                        return false
-                    }
-                }
-            }
-            
-            return true
-        }
-    }
-    
-    // MARK: Properties - For New Transaction, Payment-Specific
-    
-    var otherPartyPaid = false
-    
-    var otherPartyValid = false {
+    var amount: Decimal? {
         didSet {
             self.updateSaveButtonState()
         }
     }
     
-    var paymentOtherParty: String? {
-        didSet {
-            self.otherPartyForPaymentTableViewCell?.detailTextLabel?.text = self.paymentOtherParty
-            self.otherPartyValid = self.paymentOtherParty != nil
-        }
+    override func viewDidAppear(_ animated: Bool) {
+        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transaction!)
     }
-    
-    var paymentAmountValid = false {
-        didSet {
-            self.updateSaveButtonState()
-        }
-    }
-    
-    var paymentAmount: Decimal? {
-        didSet {
-            self.paymentAmountValid = self.paymentAmount != nil && self.paymentAmount! > 0
-        }
-    }
-    
     
     // MARK: Properties - UI Items
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    var dateTableViewCell: UITableViewCell?
-    var datePickerVisible = false {
-        didSet {
-            tableView.reloadSections([1], with: .automatic)
+    var dateTableViewCell: UITableViewCell? {
+        willSet {
+            newValue?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
         }
     }
-    var datePickerTableViewCell: DatePickerTableViewCell?
-    var paymentExpenseSegmentControllerTableViewCell: PaymentExpenseSegmentControllerTableViewCell?
-    var amountTableViewCell: AmountTableViewCell?
-    var addFriendTableViewCell: UITableViewCell?
     
-    // MARK: Properties - UI Items - Specific to Payment
+    var datePickerVisible = false {
+        didSet {
+            tableView.reloadSections([0], with: .automatic)
+        }
+    }
     
-    var otherPartyForPaymentTableViewCell: UITableViewCell?
-    var whoRecievedPaymentTableViewCell: WhoRecievedPaymentSegmentControllerTableViewCell?
+    var datePickerTableViewCell: DatePickerTableViewCell? {
+        willSet {
+            newValue?.datePicker.setDate(self.date, animated: false)
+            newValue?.datePicker.maximumDate = Date()
+            newValue?.datePicker.addTarget(self, action: #selector(handleDatePickerValueChange), for: .valueChanged)
+        }
+    }
     
-    // MARK: Properties - UI Items - Specific to Expense
+    var amountTableViewCell: AmountTableViewCell? {
+        willSet {
+            let amountToDisplay = self.amount! as NSDecimalNumber
+            newValue?.amountTextEntry.text = self.amountTextEntryFormatter.string(from: amountToDisplay)
+            newValue?.amountTextEntry.delegate = self
+            newValue?.amountTextEntry.tag = 0
+        }
+    }
     
-    var chooseDescriptionTableViewCell: UITableViewCell?
+    var descriptionTableViewCell: DescriptionTableViewCell? {
+        willSet {
+            newValue?.textField.text = self.transactionDescription
+            newValue?.textField.delegate = self
+            newValue?.textField.tag = 1
+        }
+    }
+    
+    var selectCategoryTableViewCell: UITableViewCell? {
+        willSet {
+            newValue?.detailTextLabel?.text = self.category
+        }
+    }
     
     func updateSaveButtonState() {
-        if newExpenseMode{
-            if !self.expenseDescriptionValid {
-                self.saveButton.isEnabled = false
-            } else if !self.categoriesAndAmountsValid {
-                self.saveButton.isEnabled = false
-            } else {
-                self.saveButton.isEnabled = true
-            }
+        if !self.categoryIsValid {
+            self.saveButton.isEnabled = false
+        } else if !self.amountIsValid {
+            self.saveButton.isEnabled = false
         } else {
-            if !self.otherPartyValid {
-                self.saveButton.isEnabled = false
-            } else if !self.paymentAmountValid {
-                self.saveButton.isEnabled = false
-            } else {
-                self.saveButton.isEnabled = true
-            }
+            self.saveButton.isEnabled = true
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.date = Date()
-        
-        self.friendToAmount = ["John Smith": Decimal(120.60)]
-        
-        self.categoryToAmount = ["Grocery": Decimal(56.79)]
-        
-        if let friend = self.friendToSuggest {
-            self.friendToAmount[friend] = Decimal(0)
-        }
-        
-        if let category = self.categoryToSuggest {
-            self.categoryToAmount[category] = Decimal(0)
-        }
-        
         self.saveButton.isEnabled = false
+        
+        if transaction == nil {
+            self.navigationItem.title = "New Expense"
+            self.date = Date()
+            if categoryToSuggest != nil {
+                self.category = nil
+            }
+        } else {
+            self.amount = transaction!.amount
+            self.category = transaction!.category
+            self.transactionDescription = transaction!.description
+            self.date = transaction!.date
+        }
+    }
+    
+    // MARK: Select Category Delegate
+    
+    func didFinishSelecting(_ selectCategoryController: SelectCategoryTableViewController, category: String?) {
+        if let newCategory = category {
+            self.category = newCategory
+        }
+        selectCategoryController.dismiss(animated: true, completion: nil)
     }
 
-    // MARK: - Table view data source
-
+    // MARK: UITableView Delegate
+    
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 5
+        return 4
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 1 && self.datePickerVisible {
+        if section == 0 && self.datePickerVisible {
             return 2
-        } else if section == 3 && self.newExpenseMode {
-            return self.categories.count + 1
-        } else if section == 4 && self.newExpenseMode {
-            return self.friends.count + 1
         } else {
             return 1
         }
@@ -216,89 +168,74 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "paymentExpenseSegmentControllerTableViewCell", for: indexPath) as! PaymentExpenseSegmentControllerTableViewCell
-            self.paymentExpenseSegmentControllerTableViewCell = cell
-            self.paymentExpenseSegmentControllerTableViewCell?.paymentExpenseSegmentController.addTarget(self, action: #selector(handleExpensePaymentSegmentControllerValueChange), for: UIControlEvents.valueChanged)
-            return cell
-        } else if indexPath.section == 1 {
             if indexPath.row == 0 {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "dateTableViewCell", for: indexPath)
                 self.dateTableViewCell = cell
-                self.dateTableViewCell?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
                 return cell
             } else {
                 let cell = tableView.dequeueReusableCell(withIdentifier: "datePickerTableViewCell", for: indexPath) as! DatePickerTableViewCell
                 self.datePickerTableViewCell = cell
-                self.datePickerTableViewCell?.datePicker.setDate(self.date, animated: false)
-                self.datePickerTableViewCell?.datePicker.addTarget(self, action: #selector(handleExpensePaymentSegmentControllerValueChange), for: .valueChanged)
                 return cell
             }
+        } else if indexPath.section == 1 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "amountTableViewCell", for: indexPath) as! AmountTableViewCell
+            self.amountTableViewCell = cell
+            return cell
         } else if indexPath.section == 2 {
-            if self.newExpenseMode {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "chooseDescriptionTableViewCell", for: indexPath)
-                self.chooseDescriptionTableViewCell = cell
-                if self.expenseDescription != nil {
-                    self.chooseDescriptionTableViewCell?.detailTextLabel?.text = self.expenseDescription
-                }
-                return cell
-            } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "whoRecievedPaymentTableViewCell", for: indexPath) as! WhoRecievedPaymentSegmentControllerTableViewCell
-                self.whoRecievedPaymentTableViewCell = cell
-                if self.otherPartyPaid {
-                    self.whoRecievedPaymentTableViewCell?.whoPaidSegmentController.selectedSegmentIndex = 1
-                } else {
-                    self.whoRecievedPaymentTableViewCell?.whoPaidSegmentController.selectedSegmentIndex = 0
-                }
-                return cell
-            }
-        } else if indexPath.section == 3 {
-            if self.newExpenseMode {
-                if indexPath.row == self.categories.count {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "addCategoryTableViewCell", for: indexPath)
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "categoryOrFriendTableViewCell", for: indexPath) as! CategoryOrFriendTableViewCell
-                    cell.categoryOrFriendLabel.text = self.categories[indexPath.row]
-                    return cell
-                }
-            } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "otherPartyForPaymentTableViewCell", for: indexPath)
-                self.otherPartyForPaymentTableViewCell = cell
-                if self.paymentOtherParty != nil {
-                    self.otherPartyForPaymentTableViewCell?.detailTextLabel?.text = self.paymentOtherParty
-                }
-                return cell
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "selectCategoryTableViewCell", for: indexPath)
+            self.selectCategoryTableViewCell = cell
+            return cell
         } else {
-            if self.newExpenseMode {
-                if indexPath.row == self.friends.count {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "addFriendTableViewCell", for: indexPath)
-                    return cell
-                } else {
-                    let cell = tableView.dequeueReusableCell(withIdentifier: "categoryOrFriendTableViewCell", for: indexPath) as! CategoryOrFriendTableViewCell
-                    cell.categoryOrFriendLabel.text = self.friends[indexPath.row]
-                    return cell
-                }
-            } else {
-                let cell = tableView.dequeueReusableCell(withIdentifier: "amountTableViewCell", for: indexPath) as! AmountTableViewCell
-                self.amountTableViewCell = cell
-                self.amountTableViewCell?.amountTextEntry.delegate = self
-                return cell
-            }
+            let cell = tableView.dequeueReusableCell(withIdentifier: "descriptionTableViewCell", for: indexPath) as! DescriptionTableViewCell
+            self.descriptionTableViewCell = cell
+            return cell
         }
-        }
+    }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 1 && indexPath.row == 0 {
             self.handleTableDateTableViewCellTap()
         }
     }
     
-    // MARK: Actions
-    
-    @objc func handleExpensePaymentSegmentControllerValueChange() {
-        tableView.reloadSections([1, 2, 3, 4, 5], with: .automatic)
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        if indexPath.section == 1 && indexPath.row == 0 {
+            return true
+        } else if indexPath.section == 2 {
+            return true
+        } else {
+            return false
+        }
     }
+    
+    //MARK: UITextFieldDelegate
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        self.saveButton.isEnabled = false
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        if textField.tag == 0 {
+            let validAmount = self.currencyAmountFormatter.number(from: string)
+            textField.text = self.currencyAmountFormatter.string(from: validAmount!)
+            return false
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if textField.tag == 0 {
+            self.amount = self.currencyAmountFormatter.number(from: textField.text!) as? Decimal
+        } else {
+            self.transactionDescription = textField.text
+        }
+    }
+    
+    // MARK: Actions
     
     @objc func handleDatePickerValueChange() {
         self.date = self.datePickerTableViewCell?.datePicker.date
@@ -308,49 +245,23 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         self.datePickerVisible = !self.datePickerVisible
     }
     
+    @IBAction func handleCancelButtonPress(_ sender: Any) {
+        self.addExpenseDelegate?.didFinishAdding(self, expense: self.transaction)
+        self.editExpenseDelegate?.didFinishEditing(self, expense: self.transaction!)
     }
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    
+    @IBAction func handleSaveButtonPress(_ sender: Any) {
+        if self.transaction != nil {
+            self.user.editTransaction(self.transaction!, date: self.date, description: self.description, amount: self.amount!, category: self.category!)
+            self.editExpenseDelegate?.didFinishEditing(self, expense: self.transaction!)
+        } else {
+            // self.transaction = new transaction
+            // create and return?
+            self.addExpenseDelegate?.didFinishAdding(self, expense: self.transaction)
+        }
     }
-    */
+    
+}
 
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
-    }
-    */
 
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
 
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */

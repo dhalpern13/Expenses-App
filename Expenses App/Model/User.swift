@@ -10,7 +10,7 @@ import Foundation
 
 
 
-class User{
+class User {
     
     var currentYear = Date().getYearNum()
     var currentMonth = Date().getMonthNum()

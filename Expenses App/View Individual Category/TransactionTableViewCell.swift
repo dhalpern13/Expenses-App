@@ -1,5 +1,5 @@
 //
-//  PaymentExpenseSegmentControllerTableViewCell.swift
+//  TransactionTableViewCell.swift
 //  Expenses App
 //
 //  Created by Christopher Bantle on 2018-01-09.
@@ -8,10 +8,12 @@
 
 import UIKit
 
-class PaymentExpenseSegmentControllerTableViewCell: UITableViewCell {
+class TransactionTableViewCell: UITableViewCell {
     
     // MARK: Properties
-    @IBOutlet weak var paymentExpenseSegmentController: UISegmentedControl!
+    @IBOutlet weak var amountLabel: UILabel!
+    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var descriptionLabel: UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -8,6 +8,55 @@
 
 import UIKit
 
+extension UIViewController {
+    
+    var user: User {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.user!
+    }
+    
+    var dateFormatter: DateFormatter {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.dateFormatter!
+    }
+    
+    var currencyAmountFormatter: NumberFormatter {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        return appDelegate.currencyAmountFormatter!
+    }
+    
+    func getMonth(from int: Int) -> String {
+        switch int {
+        case 1:
+            return "January"
+        case 2:
+            return "February"
+        case 3:
+            return "March"
+        case 4:
+            return "April"
+        case 5:
+            return "May"
+        case 6:
+            return "June"
+        case 7:
+            return "July"
+        case 8:
+            return "August"
+        case 9:
+            return "September"
+        case 10:
+            return "October"
+        case 11:
+            return "November"
+        case 12:
+            return "December"
+        default:
+            return "The number \(int) does not correspond to a month."
+        }
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -17,22 +66,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     var user: User?
     var dateFormatter: DateFormatter?
-    var currentDate: Date?
+    var currencyAmountFormatter: NumberFormatter?
+    
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        self.user = User(name: "John Smith", userName: "john.smith@icloud.com")
+        self.user = User()
         
         self.dateFormatter = DateFormatter()
         self.dateFormatter!.dateStyle = .long
         
-        self.currentDate = Date()
-        
-        return true
-    }
-
-    func applicationWillResignActive(_ application: UIApplication) {
-        // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-        // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+        self.currencyAmountFormatter = NumberFormatter()
+        self.currencyAmountFormatter?.numberStyle = .currency
+        self.currencyAmountFormatter?.maximumIntegerDigits = 10
+        self.currencyAmountFormatter?.minimumFractionDigits = 2
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
@@ -40,18 +86,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     }
 
-    func applicationWillEnterForeground(_ application: UIApplication) {
-        // Called as part of the transition from the background to the active state; here you can undo many of the changes made on entering the background.
     }
-
-    func applicationDidBecomeActive(_ application: UIApplication) {
-        // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-    }
-
-    func applicationWillTerminate(_ application: UIApplication) {
-        // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
-    }
-
-
-}
 
