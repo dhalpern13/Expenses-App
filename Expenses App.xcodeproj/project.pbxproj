@@ -10,7 +10,7 @@
 		6532F4961FF2E9AD00A0FA7D /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6532F4951FF2E9AD00A0FA7D /* User.swift */; };
 		6532F4981FF2E9C500A0FA7D /* Transaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6532F4971FF2E9C500A0FA7D /* Transaction.swift */; };
 		65A36E432001565800598783 /* TransactionFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65A36E422001565800598783 /* TransactionFactory.swift */; };
-		9F2319372006F05E003FB444 /* AddTransactionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */; };
+		9F2319372006F05E003FB444 /* AddOrEditTransactionTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2319362006F05E003FB444 /* AddOrEditTransactionTableViewController.swift */; };
 		9F2EC08D2006FBF000185C86 /* AmountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F2EC08C2006FBF000185C86 /* AmountTableViewCell.swift */; };
 		9F84FFD5200535F400AAE9D6 /* TransactionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFD4200535F400AAE9D6 /* TransactionTableViewCell.swift */; };
 		9F84FFDC2005819F00AAE9D6 /* SelectMonthTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F84FFDB2005819F00AAE9D6 /* SelectMonthTableViewController.swift */; };
@@ -49,7 +49,7 @@
 		6532F4951FF2E9AD00A0FA7D /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		6532F4971FF2E9C500A0FA7D /* Transaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transaction.swift; sourceTree = "<group>"; };
 		65A36E422001565800598783 /* TransactionFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionFactory.swift; sourceTree = "<group>"; };
-		9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionTableViewController.swift; sourceTree = "<group>"; };
+		9F2319362006F05E003FB444 /* AddOrEditTransactionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddOrEditTransactionTableViewController.swift; sourceTree = "<group>"; };
 		9F2EC08C2006FBF000185C86 /* AmountTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFD4200535F400AAE9D6 /* TransactionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionTableViewCell.swift; sourceTree = "<group>"; };
 		9F84FFDB2005819F00AAE9D6 /* SelectMonthTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectMonthTableViewController.swift; sourceTree = "<group>"; };
@@ -131,7 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				9FCA225D200970A7009F4984 /* Cells */,
-				9F2319362006F05E003FB444 /* AddTransactionTableViewController.swift */,
+				9F2319362006F05E003FB444 /* AddOrEditTransactionTableViewController.swift */,
 				9FF87B8020084F4800080277 /* SelectCategoryTableViewController.swift */,
 			);
 			path = "Add New Transaction";
@@ -337,7 +337,7 @@
 			files = (
 				9FF87B7F20081F2500080277 /* DescriptionTableViewCell.swift in Sources */,
 				9FCA225F2009A7B6009F4984 /* DateExtension.swift in Sources */,
-				9F2319372006F05E003FB444 /* AddTransactionTableViewController.swift in Sources */,
+				9F2319372006F05E003FB444 /* AddOrEditTransactionTableViewController.swift in Sources */,
 				9FA133062002EBFE001CCE5A /* ViewAllCategoriesTableViewController.swift in Sources */,
 				9FA1330A2002F713001CCE5A /* IndividualCategoryTableViewController.swift in Sources */,
 				9F84FFD5200535F400AAE9D6 /* TransactionTableViewCell.swift in Sources */,

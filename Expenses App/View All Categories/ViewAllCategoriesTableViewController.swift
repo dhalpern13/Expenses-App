@@ -20,16 +20,16 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         }
     }
     
-    var monthString: String {
+    var monthAndYearString: String {
         get {
-            return self.getMonth(from: self.monthAndYear!.month)
+            return self.getMonth(from: self.monthAndYear!.month) + " \(self.year)"
         }
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if self.month == nil || self.year == nil {
+        if self.monthAndYear?.month == nil || self.monthAndYear?.year == nil {
             let currentDate = Date()
             self.month = currentDate.getMonthNum()
             self.year = currentDate.getYearNum()
@@ -69,7 +69,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     
     func loadTitle() {
         let monthLabel = UILabel()
-        monthLabel.text = self.monthString + " \(self.monthAndYear!.year)"
+        monthLabel.text = self.monthAndYearString
         monthLabel.font = UIFont.boldSystemFont(ofSize: 17)
         monthLabel.sizeToFit()
         
@@ -80,7 +80,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         let width = monthLabel.frame.size.width
         stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
         
-        self.navigationItem.title = self.monthString + " \(self.monthAndYear!.year)"
+        self.navigationItem.title = self.monthAndYearString
         self.navigationItem.titleView = stackView
         
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(respondToMonthLabelTap))

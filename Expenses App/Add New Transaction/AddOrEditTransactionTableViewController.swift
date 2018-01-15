@@ -26,6 +26,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     var editExpenseDelegate: EditExpenseDelegate?
     
+    var numberFormatter = NumberFormatter()
+    
     var transaction: Transaction?
     
     var categoryToSuggest: String?
@@ -36,17 +38,27 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    var transactionDescription: String?
+    var transactionDescriptionIsValid: Bool {
+        get {
+            return self.transactionDescription != nil && !self.transactionDescription!.isEmpty
+        }
+    }
+    
+    var transactionDescription: String? {
+        didSet {
+            self.updateSaveButtonState()
+        }
+    }
     
     var categoryIsValid: Bool {
         get {
-            return self.category != nil
+            return self.category != nil && !self.category!.isEmpty
         }
     }
     
     var category: String? {
         didSet {
-            self.selectCategoryTableViewCell?.detailTextLabel?.text = category
+            self.selectCategoryTableViewCell?.detailTextLabel?.text = self.category
             self.updateSaveButtonState()
         }
     }
@@ -59,12 +71,11 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     var amount: Decimal? {
         didSet {
+            if self.amount != nil {
+                self.amountTableViewCell?.amountTextEntry.text = self.currencyAmountFormatter.string(from: self.amount! as NSNumber)
+            }
             self.updateSaveButtonState()
         }
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transaction!)
     }
     
     // MARK: Properties - UI Items
@@ -93,8 +104,9 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     var amountTableViewCell: AmountTableViewCell? {
         willSet {
-            let amountToDisplay = self.amount! as NSDecimalNumber
-            newValue?.amountTextEntry.text = self.amountTextEntryFormatter.string(from: amountToDisplay)
+            if self.amount != nil {
+                newValue?.amountTextEntry.text = self.currencyAmountFormatter.string(from: self.amount! as NSNumber)
+            }
             newValue?.amountTextEntry.delegate = self
             newValue?.amountTextEntry.tag = 0
         }
@@ -119,6 +131,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
             self.saveButton.isEnabled = false
         } else if !self.amountIsValid {
             self.saveButton.isEnabled = false
+        } else if !self.transactionDescriptionIsValid {
+            self.saveButton.isEnabled = false
         } else {
             self.saveButton.isEnabled = true
         }
@@ -133,14 +147,19 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
             self.navigationItem.title = "New Expense"
             self.date = Date()
             if categoryToSuggest != nil {
-                self.category = nil
+                self.category = self.categoryToSuggest!
             }
         } else {
+            self.navigationItem.title = ""
             self.amount = transaction!.amount
             self.category = transaction!.category
             self.transactionDescription = transaction!.description
             self.date = transaction!.date
         }
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transaction!)
     }
     
     // MARK: Select Category Delegate
@@ -212,13 +231,28 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         self.saveButton.isEnabled = false
+        if textField.tag == 0 {
+            self.amountTableViewCell?.amountTextEntry.text = self.amount?.description
+        }
     }
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField.tag == 0 {
-            let validAmount = self.currencyAmountFormatter.number(from: string)
-            textField.text = self.currencyAmountFormatter.string(from: validAmount!)
-            return false
+            if string.isEmpty {
+                return true
+            }
+            else {
+                let currentText = self.amountTableViewCell?.amountTextEntry.text ?? ""
+                let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
+                if self.numberFormatter.number(from: (self.amountTableViewCell?.amountTextEntry.text)!) != nil {
+                    let split = replacementText.components(separatedBy: self.numberFormatter.decimalSeparator)
+                    let decimalDigits = split.count == 2 ? split.last ?? "" : ""
+                    return decimalDigits.count <= 2
+                }
+                return false
+            }
+        } else {
+            return true
         }
     }
     
@@ -229,7 +263,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     func textFieldDidEndEditing(_ textField: UITextField) {
         if textField.tag == 0 {
-            self.amount = self.currencyAmountFormatter.number(from: textField.text!) as? Decimal
+            self.amount = Decimal(string: textField.text ?? "")
         } else {
             self.transactionDescription = textField.text
         }

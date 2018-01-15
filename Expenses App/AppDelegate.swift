@@ -79,12 +79,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.currencyAmountFormatter?.numberStyle = .currency
         self.currencyAmountFormatter?.maximumIntegerDigits = 10
         self.currencyAmountFormatter?.minimumFractionDigits = 2
+        self.currencyAmountFormatter?.maximumFractionDigits = 2
+        
+        return true
     }
 
-    func applicationDidEnterBackground(_ application: UIApplication) {
-        // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-        // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-    }
-
-    }
+}
 

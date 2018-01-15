@@ -70,7 +70,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         let transaction = user.yearToMonthsToCategoryToTransactions["2018"]!["January"]![category]![indexPath.row]
         cell.descriptionLabel.text = transaction.description
         cell.dateLabel.text = transaction.date
-        cell.amountLabel.text = transaction.amount
+        cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction.amount)
             
         return cell
     }
