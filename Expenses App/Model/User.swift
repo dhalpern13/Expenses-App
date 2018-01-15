@@ -12,10 +12,11 @@ import Foundation
 
 class User{
     
-    var currentYear = Date().getYearNum()
-    var currentMonth = Date().getMonthNum()
     var transactions : [Int : [Int : [Transaction]]] = [:]
     var categories : [String] = []
+    var earliestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
+    var latestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
+    
     
     func addCategory(_ category: String) {
         self.categories.append(category)
@@ -46,6 +47,18 @@ class User{
         var monthTransactions = yearTransactions[month]!
         monthTransactions.append(transaction)
         monthTransactions.sort()
+        if(year <= earliestYearAndMonth.year) {
+            earliestYearAndMonth.year = year;
+            if(month < earliestYearAndMonth.month) {
+                earliestYearAndMonth.month = month;
+            }
+        }
+        if(year >= latestYearAndMonth.year) {
+            latestYearAndMonth.year = year;
+            if(month > latestYearAndMonth.month) {
+                latestYearAndMonth.month = month;
+            }
+        }
     }
     
     func removeTransaction(_ transaction: Transaction) {
@@ -63,14 +76,10 @@ class User{
         self.addTransToDictionary(transaction)
     }
     
-    func setMonthAndYear(year: Int, month: Int) {
-        self.currentYear = year
-        self.currentMonth = month
-    }
     
-    func getTotalExpenses() -> Decimal {
+    func getTotalExpenses(year: Int, month: Int) -> Decimal {
         var total:Decimal = 0
-        if let transactions = transactions[currentYear]?[currentMonth] {
+        if let transactions = transactions[year]?[month] {
             for transaction in transactions {
                 total += transaction.amount
             }
@@ -78,9 +87,9 @@ class User{
         return total
     }
     
-    func getTotalExpensesOfCategory(_ category: String) -> Decimal {
+    func getTotalExpensesOfCategory(_ category: String, year: Int, month: Int) -> Decimal {
         var total:Decimal = 0
-        if let transactions = transactions[currentYear]?[currentMonth] {
+        if let transactions = self.transactions[year]?[month] {
             for transaction in transactions {
                 if(transaction.category == category) {
                     total += transaction.amount
@@ -90,10 +99,27 @@ class User{
         return total
     }
     
+    func getTransactionAtIndex(_ index: Int, year: Int, month: Int) -> Transaction?{
+        return self.transactions[year]?[month]?[index]
+    }
+    
+    func getIndexOfTransaction(_ transaction: Transaction) -> Int? {
+        return self.transactions[transaction.date.getYearNum()]?[transaction.date.getMonthNum()]?.index(of: transaction)
+    }
+    
+    func deleteTransactionAtIndex(_ index: Int, year: Int, month: Int) {
+        self.transactions[year]?[month]?.remove(at: index)
+    }
+    
+    
+    
     
     func getCategoriesAlphabetized() -> [String] {
         return categories.sorted()
     }
+    
+    
+    
     
     
 }
