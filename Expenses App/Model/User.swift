@@ -10,7 +10,7 @@ import Foundation
 
 
 
-class User{
+class User {
     
     var transactions : [Int : [Int : [Transaction]]] = [:]
     var categories : [String] = []

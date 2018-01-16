@@ -8,14 +8,20 @@
 
 import UIKit
 
+protocol SelectMonthDelegate {
+    func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: String?, year: String?)
+}
+
 class SelectMonthTableViewController: UITableViewController {
     
     // MARK: Properties
     
+    var delegate: SelectMonthDelegate?
+    
     var month: String?
     var year: String?
 
-    // MARK: - Table view data source
+    // MARK: UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
         return self.user.years.count
@@ -52,5 +58,6 @@ class SelectMonthTableViewController: UITableViewController {
             self.month = self.user.yearToMonths[year!]![indexPath.row]
         }
         
+        self.delegate?.didFinishSelecting(self, month: self.month, year: self.year)
     }
 }
