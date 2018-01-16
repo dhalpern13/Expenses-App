@@ -18,7 +18,13 @@ class SelectCategoryTableViewController: UITableViewController {
     
     var delegate: SelectCategoryDelegate?
     
-    var category: String?
+    var categories: [String]!
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        self.categories = self.user.categories
+    }
 
     // MARK: UITableView Delegate
 
@@ -27,22 +33,18 @@ class SelectCategoryTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        //return
+        return self.categories.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        cell.textLabel?.text = self.categories[indexPath.row]
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // set category
-        self.delegate?.didFinishSelecting(self, category: self.category)
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        // set value of category
-        self.delegate?.didFinishSelecting(self, category: self.category)
+        let selectedCategory = self.categories[indexPath.row]
+        self.delegate?.didFinishSelecting(self, category: selectedCategory)
     }
     
     // MARK: Action
@@ -54,7 +56,12 @@ class SelectCategoryTableViewController: UITableViewController {
         alertController.addAction(cancelAction)
         
         let addCategoryAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.default, handler: { (action) in
-            // add category to manager, and load the category at the given row
+            if let newCategory = alertController.textFields?[0].text, !newCategory.isEmpty {
+                let newRow = self.categories.count
+                let indexPath = IndexPath(row: newRow, section: 0)
+                self.user.addCategory(newCategory)
+                self.tableView.insertRows(at: [indexPath], with: .top)
+            }
         })
         alertController.addAction(addCategoryAction)
         
@@ -66,6 +73,6 @@ class SelectCategoryTableViewController: UITableViewController {
     }
     
     @IBAction func handleCancel(_ sender: Any) {
-        self.delegate?.didFinishSelecting(self, category: self.category)
+        self.delegate?.didFinishSelecting(self, category: nil)
     }
 }

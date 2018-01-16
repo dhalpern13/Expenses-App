@@ -13,7 +13,7 @@
         <!--Select Month-->
         <scene sceneID="ah6-QG-w09">
             <objects>
-                <tableViewController storyboardIdentifier="SelectMonthTableView" title="Select Month" useStoryboardIdentifierAsRestorationIdentifier="YES" id="TmN-d6-QsZ" customClass="SelectMonthTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Select Month" id="TmN-d6-QsZ" customClass="SelectMonthTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelectionDuringEditing="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="aQh-bh-vFj">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -46,7 +46,11 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Select Month" id="edQ-9C-nzN">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="pTs-nc-Q2h"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="pTs-nc-Q2h">
+                            <connections>
+                                <action selector="cancel:" destination="TmN-d6-QsZ" id="Z7Y-ar-bKb"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f91-5Z-p3i" userLabel="First Responder" sceneMemberID="firstResponder"/>
@@ -57,7 +61,7 @@
         <!--Navigation Controller-->
         <scene sceneID="1YW-gB-FTH">
             <objects>
-                <navigationController storyboardIdentifier="selectMonthTableViewController" id="yEE-JM-QKd" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="SelectMonthTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yEE-JM-QKd" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="GUO-DO-50P">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -115,7 +119,7 @@
                     <navigationItem key="navigationItem" title="Categories" id="RrO-JT-My1">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="3Ib-Hx-CnR">
                             <connections>
-                                <action selector="addNewExpense:" destination="m1b-Ld-z8a" id="ewN-xV-6gW"/>
+                                <action selector="addExpense:" destination="m1b-Ld-z8a" id="GWt-yD-541"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -195,7 +199,7 @@
         <!--Navigation Controller-->
         <scene sceneID="zUa-gO-TCm">
             <objects>
-                <navigationController id="PJq-bY-8LM" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="AddExpenseTableViewController" id="PJq-bY-8LM" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="g0T-w5-LgE">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -211,7 +215,7 @@
         <!--Add Or Edit Transaction Table View Controller-->
         <scene sceneID="oU3-WP-Luc">
             <objects>
-                <tableViewController storyboardIdentifier="AddOrEditExpenseTableView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="bBJ-lR-2fc" customClass="AddOrEditTransactionTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="bBJ-lR-2fc" customClass="AddOrEditTransactionTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" sectionFooterHeight="18" id="YPL-QO-WM2">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -289,7 +293,7 @@
                                     <outlet property="amountTextEntry" destination="7GD-1s-FgX" id="Fyk-9s-9Pe"/>
                                 </connections>
                             </tableViewCell>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="chooseCategoryTableViewCell" textLabel="J5R-1c-bND" detailTextLabel="akQ-0A-wqh" style="IBUITableViewCellStyleValue1" id="aoa-62-hF1">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="selectCategoryTableViewCell" textLabel="J5R-1c-bND" detailTextLabel="akQ-0A-wqh" style="IBUITableViewCellStyleValue1" id="aoa-62-hF1">
                                 <rect key="frame" x="0.0" y="305.5" width="375" height="44"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="aoa-62-hF1" id="42l-wO-qJD">
@@ -366,7 +370,7 @@
         <!--Categories-->
         <scene sceneID="9Yt-JA-7sF">
             <objects>
-                <tableViewController storyboardIdentifier="SelectCategoryTableView" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yhg-kc-8xF" customClass="SelectCategoryTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="yhg-kc-8xF" customClass="SelectCategoryTableViewController" customModule="Expenses_App" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsMultipleSelection="YES" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="AkX-Us-N6E">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -412,7 +416,7 @@
         <!--Navigation Controller-->
         <scene sceneID="bwj-yB-fIB">
             <objects>
-                <navigationController id="7Wa-1w-GYe" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="SelectCategoryTableViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="7Wa-1w-GYe" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="tLx-aM-EcZ">
                         <rect key="frame" x="0.0" y="20" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -444,6 +448,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Qfi-IN-7Gh"/>
+        <segue reference="Q3v-TK-pfY"/>
     </inferredMetricsTieBreakers>
 </document>

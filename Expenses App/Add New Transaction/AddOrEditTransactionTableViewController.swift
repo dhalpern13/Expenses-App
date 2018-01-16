@@ -212,13 +212,15 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.section == 1 && indexPath.row == 0 {
+        if indexPath.section == 0 && indexPath.row == 0 {
             self.handleTableDateTableViewCellTap()
+        } else if indexPath.section == 2 {
+            self.handleCategoryCellTap()
         }
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == 1 && indexPath.row == 0 {
+        if indexPath.section == 0 && indexPath.row == 0 {
             return true
         } else if indexPath.section == 2 {
             return true
@@ -275,6 +277,13 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         self.date = self.datePickerTableViewCell?.datePicker.date
     }
     
+    func handleCategoryCellTap() {
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        let controller = storyBoard.instantiateViewController(withIdentifier: "SelectCategoryTableView") as! SelectCategoryTableViewController
+        controller.delegate = self
+        self.present(controller, animated: true, completion: nil)
+    }
+    
     func handleTableDateTableViewCellTap() {
         self.datePickerVisible = !self.datePickerVisible
     }
@@ -289,9 +298,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
             self.user.editTransaction(self.transaction!, date: self.date, description: self.description, amount: self.amount!, category: self.category!)
             self.editExpenseDelegate?.didFinishEditing(self, expense: self.transaction!)
         } else {
-            // self.transaction = new transaction
-            // create and return?
-            self.addExpenseDelegate?.didFinishAdding(self, expense: self.transaction)
+            let newTransaction = self.user.addTransaction(date: self.date, description: self.transactionDescription!, amount: self.amount!, category: self.category!)
+            self.addExpenseDelegate?.didFinishAdding(self, expense: newTransaction)
         }
     }
     

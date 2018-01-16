@@ -26,12 +26,12 @@ class User {
         self.categories = self.categories.filter(){$0 != category}
     }
     
-    func addTransaction(date: Date, description: String, amount: Decimal, category: String) {
+    func addTransaction(date: Date, description: String, amount: Decimal, category: String) -> Transaction {
         self.removeCategory(category)
         self.categories.insert(category, at: 0)
         let toAdd = TransactionFactory.getTransaction(date: date, description: description, amount: amount, category: category)
         self.addTransToDictionary(toAdd)
-        
+        return toAdd
     }
     
     private func addTransToDictionary(_ transaction: Transaction) {
@@ -111,15 +111,7 @@ class User {
         self.transactions[year]?[month]?.remove(at: index)
     }
     
-    
-    
-    
     func getCategoriesAlphabetized() -> [String] {
         return categories.sorted()
-    }
-    
-    
-    
-    
-    
+    }    
 }

@@ -9,7 +9,7 @@
 import UIKit
 
 protocol SelectMonthDelegate {
-    func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: String?, year: String?)
+    func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: Int?, year: Int?)
 }
 
 class SelectMonthTableViewController: UITableViewController {
@@ -18,46 +18,74 @@ class SelectMonthTableViewController: UITableViewController {
     
     var delegate: SelectMonthDelegate?
     
-    var month: String?
-    var year: String?
+    var month: Int?
+    
+    var year: Int?
+    
+    var startMonth: Int!
+    
+    var startYear: Int!
+    
+    var currentMonth = Date().getMonthNum()
+    
+    var currentYear = Date().getYearNum()
+    
+    override func viewDidLoad() {
+        self.startMonth = self.user.earliestYearAndMonth.month
+        self.startYear = self.user.earliestYearAndMonth.year
+    }
 
     // MARK: UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return self.user.years.count
+        let currentYear = Date().getYearNum()
+        return currentYear - self.startYear + 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        let year = self.user.years[section]
-        return self.user.yearToMonths[year]!.count
+        if section == 0 {
+            return self.currentMonth
+        } else if self.startYear - section == 0 {
+            return 12 - self.startMonth + 1
+        } else {
+            return 12
+        }
     }
     
     override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        return self.user.years[section]
+        let yearOfSection = self.currentYear - section
+        return yearOfSection.description
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-        let year = self.user.years[indexPath.section]
-        let month = self.user.yearToMonths[year]![indexPath.row]
-        cell.textLabel!.text = month
-        return cell
-    }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        self.presentingViewController?.dismiss(animated: true, completion: nil)
-    }
-    
-    // MARK: Navigation
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        super.prepare(for: segue, sender: sender)
-        
-        if sender is UITableViewCell, let indexPath = self.tableView.indexPathForSelectedRow {
-            self.year = self.user.years[indexPath.section]
-            self.month = self.user.yearToMonths[year!]![indexPath.row]
+        let yearOfSection = self.currentYear - indexPath.section
+        if yearOfSection == self.currentYear || yearOfSection > self.startYear {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+            cell.textLabel!.text = self.getMonth(from: indexPath.row + 1)
+            return cell
+        } else {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+            let monthNumber = self.startMonth + indexPath.row
+            cell.textLabel!.text = self.getMonth(from: monthNumber)
+            return cell
         }
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.year = self.currentYear - indexPath.section
         
+        if self.year == self.currentYear {
+            self.month = self.currentMonth - indexPath.row
+        } else {
+            self.month = 12 - indexPath.row
+        }
+        // dont store return values as attributes
+        self.delegate?.didFinishSelecting(self, month: self.month, year: self.year)
+    }
+    
+    // MARK: Action
+    
+    @IBAction func cancel(_ sender: Any) {
         self.delegate?.didFinishSelecting(self, month: self.month, year: self.year)
     }
 }

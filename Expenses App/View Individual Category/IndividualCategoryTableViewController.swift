@@ -20,6 +20,18 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     
     var monthAndYear: (month: Int, year: Int)!
     
+    var month: Int {
+        get {
+            return self.monthAndYear!.month
+        }
+    }
+    
+    var year: Int {
+        get {
+            return self.monthAndYear!.year
+        }
+    }
+    
     var category: String!
     
     override func viewDidLoad() {
@@ -31,10 +43,10 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     // MARK: Add Expense Delegate
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
-        if let newExpense = expense {
-            if newExpense.category == category {
-                self.tableView.reloadData()
-            }
+        if let newExpense = expense, newExpense.category == category {
+            let rowOfNewTransaction = self.user.getIndexOfTransaction(newExpense)!
+            let indexPathOfNewTransction = IndexPath(row: rowOfNewTransaction, section: 0)
+            self.tableView.insertRows(at: [indexPathOfNewTransction], with: .none)
         }
         addExpenseController.dismiss(animated: true, completion: nil)
     }
@@ -42,11 +54,15 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     // MARK: Edit Expense Delegate
     
     func didBeginEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        // get index of transaction from user, and then delete the transactions
+        let rowOfTransaction = self.user.getIndexOfTransaction(expense)!
+        let indexPathOfTransaction = IndexPath(row: rowOfTransaction, section: 0)
+        self.tableView.deleteRows(at: [indexPathOfTransaction], with: .none)
     }
     
     func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        // get new index of transaction, and then re-insert it into the table view
+        let rowOfTransaction = self.user.getIndexOfTransaction(expense)!
+        let indexPathOfTransction = IndexPath(row: rowOfTransaction, section: 0)
+        self.tableView.insertRows(at: [indexPathOfTransction], with: .none)
         self.navigationController?.popViewController(animated: true)
     }
 
@@ -57,33 +73,27 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 2
+        if let transactions = self.user.transactions[self.year]?[self.month] {
+            return transactions.count
+        } else {
+            return 0
+        }
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = "TransactionTableViewCell"
-        
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as? TransactionTableViewCell else {
-            fatalError("Cell was not of type TransactionTableViewCell")
-        }
-        
-        let transaction = user.yearToMonthsToCategoryToTransactions["2018"]!["January"]![category]![indexPath.row]
-        cell.descriptionLabel.text = transaction.description
-        cell.dateLabel.text = transaction.date
-        cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction.amount)
-            
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! TransactionTableViewCell
+        let transaction = self.user.transactions[self.year]?[self.month]?[indexPath.row]
+        cell.descriptionLabel.text = transaction!.description
+        cell.dateLabel.text = self.dateFormatter.string(from: transaction!.date)
+        cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction!.amount as NSNumber)
         return cell
-    }
-
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
     }
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            self.user.deleteTransactionAtIndex(indexPath.row, year: self.year, month: self.month)
+            self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
 
@@ -92,8 +102,8 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         super.prepare(for: segue, sender: sender)
         
-        if let editExpenseController = segue.destination as? AddOrEditTransactionTableViewController {
-            // editExpenseViewController.transaction = the cell
+        if let editExpenseController = segue.destination as? AddOrEditTransactionTableViewController, let indexPath = tableView.indexPathForSelectedRow {
+            editExpenseController.transaction = self.user.transactions[self.year]?[self.month]?[indexPath.row]
             editExpenseController.editExpenseDelegate = self
         }
     }

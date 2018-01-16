@@ -14,7 +14,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     
     var monthAndYear: (month: Int, year: Int)? {
         didSet {
-            if oldValue?.month != self.monthAndYear?.month || oldValue?.year != self.monthAndYear?.year {
+            if oldValue != nil && (oldValue?.month != self.monthAndYear?.month || oldValue?.year != self.monthAndYear?.year) {
                 self.tableView?.reloadData()
             }
         }
@@ -22,18 +22,37 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     
     var monthAndYearString: String {
         get {
-            return self.getMonth(from: self.monthAndYear!.month) + " \(self.year)"
+            return self.getMonth(from: self.month) + " \(self.year)"
         }
     }
+    
+    var month: Int {
+        return self.monthAndYear!.month
+    }
+    
+    var year: Int {
+        return self.monthAndYear!.year
+    }
+    
+    var categories: [String]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
         if self.monthAndYear?.month == nil || self.monthAndYear?.year == nil {
             let currentDate = Date()
-            self.month = currentDate.getMonthNum()
-            self.year = currentDate.getYearNum()
+            self.monthAndYear = (currentDate.getMonthNum(), currentDate.getYearNum())
         }
+        
+        self.categories = self.user.getCategoriesAlphabetized()
+        
+        self.categories = self.categories!.filter({ (category) -> Bool in
+            if self.user.getTotalExpensesOfCategory(category, year: self.year, month: self.month) > 0 {
+                return true
+            } else {
+                return false
+            }
+        })
         
         loadTitle()
     }
@@ -51,8 +70,22 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
         if let newExepense = expense {
-            // This should be modified to only reload the cells that have changed.
-            self.tableView.reloadData()
+            
+            let categoryOfNewExpense = newExepense.category
+            
+            if let rowOfCategory = self.categories!.index(of: categoryOfNewExpense) {
+                let indexPathOfCategory = IndexPath(row: rowOfCategory, section: 0)
+                self.tableView.reloadRows(at: [indexPathOfCategory], with: .none)
+            } else {
+                self.categories.append(categoryOfNewExpense)
+                self.categories.sort()
+                let rowOfCategory = self.categories.index(of: categoryOfNewExpense)!
+                let indexPathOfCategory = IndexPath(row: rowOfCategory, section: 0)
+                self.tableView.insertRows(at: [indexPathOfCategory], with: .none)
+            }
+        
+            let indexPathOfTotalRow = IndexPath(row: 0, section: 1)
+            self.tableView.reloadRows(at: [indexPathOfTotalRow], with: .none)
         }
         addExpenseController.dismiss(animated: true, completion: nil)
     }
@@ -63,7 +96,6 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         self.tableView.reloadData()
         self.navigationController?.popViewController(animated: true)
     }
-    
     
     // MARK: Load Title
     
@@ -92,14 +124,13 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     // MARK: UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 3
+        return 2
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        switch section {
-        case 1:
-            return user.yearToMonthsToCategoryToTransactions[year]![month]!.count
-        default:
+        if section == 0 {
+            return self.categories.count
+        } else {
             return 1
         }
     }
@@ -108,31 +139,17 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         let cellIdentifier = "IndividualCategoryTableViewCell"
         if indexPath.section == 0 {
             let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-            cell.textLabel!.text = "Total"
-            cell.detailTextLabel!.text = "$1,100"
-            return cell
-        } else if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
-            let category = self.user.categories[indexPath.row]
+            let category = self.categories[indexPath.row]
             cell.textLabel!.text = category
-            cell.detailTextLabel!.text = "$1,000"
+            let totalForCategory = self.user.getTotalExpensesOfCategory(category, year: self.year, month: self.month)
+            cell.detailTextLabel!.text = self.currencyAmountFormatter.string(from: totalForCategory as NSNumber)
             return cell
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        if indexPath.section == 1 {
-            return true
         } else {
-            return false
-        }
-    }
-    
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // delete category from back end
-            tableView.deleteRows(at: [indexPath], with: .fade)
+            let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath)
+            cell.textLabel!.text = "Total"
+            let total = self.user.getTotalExpenses(year: self.year, month: self.month)
+            cell.detailTextLabel!.text = self.currencyAmountFormatter.string(from: total as NSNumber)
+            return cell
         }
     }
 
@@ -142,7 +159,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         super.prepare(for: segue, sender: sender)
         
         if let individualCategoryViewController = segue.destination as? IndividualCategoryTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            // individualCategoryViewController.category = the category of the index
+            individualCategoryViewController.category = self.categories[indexPath.row]
             individualCategoryViewController.monthAndYear = self.monthAndYear!
             individualCategoryViewController.delegate = self
         }
@@ -153,17 +170,18 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     @objc func respondToMonthLabelTap(recognizer: UITapGestureRecognizer) {
         if recognizer.state == UIGestureRecognizerState.ended {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyBoard.instantiateViewController(withIdentifier: "SelectMonthTableView") as! SelectMonthTableViewController
-            controller.delegate = self
+            let controller = storyBoard.instantiateViewController(withIdentifier: "SelectMonthTableViewController") as! UINavigationController
+            let selectMonthTableViewController = controller.viewControllers[0] as! SelectMonthTableViewController
+            selectMonthTableViewController.delegate = self
             self.present(controller, animated: true, completion: nil)
         }
     }
     
-    @IBAction func addNewExpense(_ sender: Any) {
+    @IBAction func addExpense(_ sender: Any) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyBoard.instantiateViewController(withIdentifier: "AddOrEditExpenseTableView") as! AddOrEditTransactionTableViewController
-        controller.addExpenseDelegate = self
+        let controller = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewController") as! UINavigationController
+        let addExpenseTableViewController = controller.viewControllers[0] as! AddOrEditTransactionTableViewController
+        addExpenseTableViewController.addExpenseDelegate = self
         self.present(controller, animated: true, completion: nil)
     }
-    
 }
