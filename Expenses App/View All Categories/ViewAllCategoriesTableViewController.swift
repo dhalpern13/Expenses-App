@@ -48,8 +48,14 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
             self.monthAndYear = (currentDate.getMonthNum(), currentDate.getYearNum())
         }
         
-        self.categories = self.user.getCategoriesByYearAndMonth(year: self.year, month: self.month)
+        self.loadCategories()
         
+        loadTitle()
+    }
+    
+    func loadCategories() {
+        self.categories = self.user.getCategoriesByYearAndMonth(year: self.year, month: self.month)
+        self.categories.sort()
         self.categories = self.categories!.filter({ (category) -> Bool in
             if self.user.getTotalExpensesOfCategory(category, year: self.year, month: self.month) > 0 {
                 return true
@@ -57,8 +63,6 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
                 return false
             }
         })
-        
-        loadTitle()
     }
     
     // MARK: Select Month Delegate
@@ -97,6 +101,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     // MARK: View Category Delegate
     
     func didFinishViewing(_ viewCategoryController: IndividualCategoryTableViewController) {
+        self.loadCategories()
         self.tableView.reloadData()
         self.navigationController?.popViewController(animated: true)
     }

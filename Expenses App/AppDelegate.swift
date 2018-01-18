@@ -56,14 +56,9 @@ extension UIViewController {
         }
     }
     
-    func hideKeyboardWhenAnywhereInViewTapped() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-        
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
+    func saveData() {
+        let appDelegate = UIApplication.shared.delegate as! AppDelegate
+        appDelegate.saveUserData()
     }
 }
 
@@ -107,6 +102,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     private func loadUserData() -> User? {
         return NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? User
     }
-
 }
 

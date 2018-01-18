@@ -84,20 +84,16 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let transactions = self.user.transactions[self.year]?[self.month] {
-            return transactions.count
-        } else {
-            return 0
-        }
+        return transactions.count
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cellIdentifier = "TransactionTableViewCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! TransactionTableViewCell
-        let transaction = self.user.transactions[self.year]?[self.month]?[indexPath.row]
-        cell.descriptionLabel.text = transaction!.description
-        cell.dateLabel.text = self.dateFormatter.string(from: transaction!.date)
-        cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction!.amount as NSNumber)
+        let transaction = self.transactions[indexPath.row]
+        cell.descriptionLabel.text = transaction.description
+        cell.dateLabel.text = self.dateFormatter.string(from: transaction.date)
+        cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction.amount as NSNumber)
         return cell
     }
 
@@ -107,6 +103,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
             self.transactions.remove(at: indexPath.row)
             self.user.removeTransaction(expenseToDelete)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
+            self.saveData()
         }
     }
 

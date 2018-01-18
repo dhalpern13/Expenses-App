@@ -149,7 +149,9 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         
         self.saveButton.isEnabled = false
         
-        self.hideKeyboardWhenAnywhereInViewTapped()
+        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardView))
+        gestureRecognizer.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(gestureRecognizer)
         
         if self.transactionToEdit == nil {
             self.navigationItem.title = "New Expense"
@@ -306,6 +308,10 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         self.datePickerVisible = !self.datePickerVisible
     }
     
+    @objc func dismissKeyboardView() {
+        view.endEditing(true)
+    }
+    
     @IBAction func cancel(_ sender: Any) {
         self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
         self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
@@ -319,6 +325,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
             let newTransaction = self.user.addTransaction(date: self.date, description: self.transactionDescription!, amount: self.amount!, category: self.category!)
             self.addExpenseDelegate?.didFinishAdding(self, expense: newTransaction)
         }
+        self.saveData()
     }
 }
 
