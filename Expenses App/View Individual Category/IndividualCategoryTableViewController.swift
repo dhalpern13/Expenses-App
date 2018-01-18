@@ -103,7 +103,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         super.prepare(for: segue, sender: sender)
         
         if let editExpenseController = segue.destination as? AddOrEditTransactionTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            editExpenseController.transaction = self.user.transactions[self.year]?[self.month]?[indexPath.row]
+            editExpenseController.transactionToEdit = self.user.transactions[self.year]?[self.month]?[indexPath.row]
             editExpenseController.editExpenseDelegate = self
         }
     }
@@ -112,9 +112,10 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     
     @IBAction func addNewExpense(_ sender: Any) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyBoard.instantiateViewController(withIdentifier: "AddOrEditExpenseTableView") as! AddOrEditTransactionTableViewController
-        controller.categoryToSuggest = self.category
-        controller.addExpenseDelegate = self
-        self.present(controller, animated: true, completion: nil)
+        let rootController = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewRootController") as! UINavigationController
+        let addExpenseTableViewController = rootController.viewControllers[0] as! AddOrEditTransactionTableViewController
+        addExpenseTableViewController.addExpenseDelegate = self
+        addExpenseTableViewController.categoryToSuggest = self.category
+        self.present(rootController, animated: true, completion: nil)
     }
 }

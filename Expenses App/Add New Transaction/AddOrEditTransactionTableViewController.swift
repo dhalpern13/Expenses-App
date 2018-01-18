@@ -28,7 +28,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     var numberFormatter = NumberFormatter()
     
-    var transaction: Transaction?
+    var transactionToEdit: Transaction?
     
     var categoryToSuggest: String?
     
@@ -46,6 +46,11 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     var transactionDescription: String? {
         didSet {
+            if self.transactionDescriptionIsValid {
+                self.descriptionTableViewCell?.textField.textColor = nil
+            } else {
+                self.descriptionTableViewCell?.textField.textColor = UIColor.lightGray
+            }
             self.updateSaveButtonState()
         }
     }
@@ -59,6 +64,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     var category: String? {
         didSet {
             self.selectCategoryTableViewCell?.detailTextLabel?.text = self.category
+            self.selectCategoryTableViewCell?.detailTextLabel?.textColor = nil
             self.updateSaveButtonState()
         }
     }
@@ -143,7 +149,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         
         self.saveButton.isEnabled = false
         
-        if transaction == nil {
+        if self.transactionToEdit == nil {
             self.navigationItem.title = "New Expense"
             self.date = Date()
             if categoryToSuggest != nil {
@@ -151,15 +157,15 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
             }
         } else {
             self.navigationItem.title = ""
-            self.amount = transaction!.amount
-            self.category = transaction!.category
-            self.transactionDescription = transaction!.description
-            self.date = transaction!.date
+            self.amount = transactionToEdit!.amount
+            self.category = transactionToEdit!.category
+            self.transactionDescription = transactionToEdit!.description
+            self.date = transactionToEdit!.date
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transaction!)
+        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transactionToEdit!)
     }
     
     // MARK: Select Category Delegate
@@ -168,7 +174,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         if let newCategory = category {
             self.category = newCategory
         }
-        selectCategoryController.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
     }
 
     // MARK: UITableView Delegate
@@ -197,16 +203,16 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
                 return cell
             }
         } else if indexPath.section == 1 {
+            let cell = tableView.dequeueReusableCell(withIdentifier: "descriptionTableViewCell", for: indexPath) as! DescriptionTableViewCell
+            self.descriptionTableViewCell = cell
+            return cell
+        } else if indexPath.section == 2 {
             let cell = tableView.dequeueReusableCell(withIdentifier: "amountTableViewCell", for: indexPath) as! AmountTableViewCell
             self.amountTableViewCell = cell
             return cell
-        } else if indexPath.section == 2 {
+        } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "selectCategoryTableViewCell", for: indexPath)
             self.selectCategoryTableViewCell = cell
-            return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(withIdentifier: "descriptionTableViewCell", for: indexPath) as! DescriptionTableViewCell
-            self.descriptionTableViewCell = cell
             return cell
         }
     }
@@ -214,15 +220,15 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.section == 0 && indexPath.row == 0 {
             self.handleTableDateTableViewCellTap()
-        } else if indexPath.section == 2 {
-            self.handleCategoryCellTap()
+        } else if indexPath.section == 3 {
+            self.datePickerVisible = false
         }
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         if indexPath.section == 0 && indexPath.row == 0 {
             return true
-        } else if indexPath.section == 2 {
+        } else if indexPath.section == 3 {
             return true
         } else {
             return false
@@ -233,6 +239,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         self.saveButton.isEnabled = false
+        self.datePickerVisible = false
         if textField.tag == 0 {
             self.amountTableViewCell?.amountTextEntry.text = self.amount?.description
         }
@@ -271,38 +278,40 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
+    // MARK: Navigation
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        super.prepare(for: segue, sender: sender)
+        
+        if let selectCategoryTableViewController = segue.destination as? SelectCategoryTableViewController {
+            selectCategoryTableViewController.delegate = self
+        }
+    }
+    
     // MARK: Actions
     
     @objc func handleDatePickerValueChange() {
         self.date = self.datePickerTableViewCell?.datePicker.date
     }
     
-    func handleCategoryCellTap() {
-        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyBoard.instantiateViewController(withIdentifier: "SelectCategoryTableView") as! SelectCategoryTableViewController
-        controller.delegate = self
-        self.present(controller, animated: true, completion: nil)
-    }
-    
     func handleTableDateTableViewCellTap() {
         self.datePickerVisible = !self.datePickerVisible
     }
     
-    @IBAction func handleCancelButtonPress(_ sender: Any) {
-        self.addExpenseDelegate?.didFinishAdding(self, expense: self.transaction)
-        self.editExpenseDelegate?.didFinishEditing(self, expense: self.transaction!)
+    @IBAction func cancel(_ sender: Any) {
+        self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
+        self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
     }
     
-    @IBAction func handleSaveButtonPress(_ sender: Any) {
-        if self.transaction != nil {
-            self.user.editTransaction(self.transaction!, date: self.date, description: self.description, amount: self.amount!, category: self.category!)
-            self.editExpenseDelegate?.didFinishEditing(self, expense: self.transaction!)
+    @IBAction func save(_ sender: Any) {
+        if self.transactionToEdit != nil {
+            self.user.editTransaction(self.transactionToEdit!, date: self.date, description: self.description, amount: self.amount!, category: self.category!)
+            self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
         } else {
             let newTransaction = self.user.addTransaction(date: self.date, description: self.transactionDescription!, amount: self.amount!, category: self.category!)
             self.addExpenseDelegate?.didFinishAdding(self, expense: newTransaction)
         }
     }
-    
 }
 
 

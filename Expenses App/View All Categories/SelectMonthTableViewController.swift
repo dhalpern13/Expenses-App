@@ -18,10 +18,6 @@ class SelectMonthTableViewController: UITableViewController {
     
     var delegate: SelectMonthDelegate?
     
-    var month: Int?
-    
-    var year: Int?
-    
     var startMonth: Int!
     
     var startYear: Int!
@@ -72,20 +68,20 @@ class SelectMonthTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.year = self.currentYear - indexPath.section
+        let year = self.currentYear - indexPath.section
         
-        if self.year == self.currentYear {
-            self.month = self.currentMonth - indexPath.row
+        var month: Int
+        if year == self.currentYear {
+            month = self.currentMonth - indexPath.row
         } else {
-            self.month = 12 - indexPath.row
+            month = 12 - indexPath.row
         }
-        // dont store return values as attributes
-        self.delegate?.didFinishSelecting(self, month: self.month, year: self.year)
+        self.delegate?.didFinishSelecting(self, month: month, year: year)
     }
     
     // MARK: Action
     
     @IBAction func cancel(_ sender: Any) {
-        self.delegate?.didFinishSelecting(self, month: self.month, year: self.year)
+        self.delegate?.didFinishSelecting(self, month: nil, year: nil)
     }
 }

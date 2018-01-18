@@ -37,7 +37,7 @@ class SelectCategoryTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SelectCategoryTableViewCell", for: indexPath)
         cell.textLabel?.text = self.categories[indexPath.row]
         return cell
     }
@@ -60,6 +60,7 @@ class SelectCategoryTableViewController: UITableViewController {
                 let newRow = self.categories.count
                 let indexPath = IndexPath(row: newRow, section: 0)
                 self.user.addCategory(newCategory)
+                self.categories?.append(newCategory)
                 self.tableView.insertRows(at: [indexPath], with: .top)
             }
         })

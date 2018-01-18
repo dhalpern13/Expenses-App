@@ -27,11 +27,15 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     }
     
     var month: Int {
-        return self.monthAndYear!.month
+        get {
+            return self.monthAndYear!.month
+        }
     }
     
     var year: Int {
-        return self.monthAndYear!.year
+        get {
+           return self.monthAndYear!.year
+        }
     }
     
     var categories: [String]!
@@ -170,18 +174,18 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     @objc func respondToMonthLabelTap(recognizer: UITapGestureRecognizer) {
         if recognizer.state == UIGestureRecognizerState.ended {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let controller = storyBoard.instantiateViewController(withIdentifier: "SelectMonthTableViewController") as! UINavigationController
-            let selectMonthTableViewController = controller.viewControllers[0] as! SelectMonthTableViewController
+            let rootController = storyBoard.instantiateViewController(withIdentifier: "SelectMonthTableViewRootController") as! UINavigationController
+            let selectMonthTableViewController = rootController.viewControllers[0] as! SelectMonthTableViewController
             selectMonthTableViewController.delegate = self
-            self.present(controller, animated: true, completion: nil)
+            self.present(rootController, animated: true, completion: nil)
         }
     }
     
     @IBAction func addExpense(_ sender: Any) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let controller = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewController") as! UINavigationController
-        let addExpenseTableViewController = controller.viewControllers[0] as! AddOrEditTransactionTableViewController
+        let rootController = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewRootController") as! UINavigationController
+        let addExpenseTableViewController = rootController.viewControllers[0] as! AddOrEditTransactionTableViewController
         addExpenseTableViewController.addExpenseDelegate = self
-        self.present(controller, animated: true, completion: nil)
+        self.present(rootController, animated: true, completion: nil)
     }
 }
