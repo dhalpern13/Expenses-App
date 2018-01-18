@@ -9,8 +9,7 @@
 import Foundation
 
 
-
-class User {
+class User: NSObject, NSCoding {
     
     var transactions : [Int : [Int : [Transaction]]] = [:]
     var categories : [String] = []
@@ -128,5 +127,43 @@ class User {
         }
         let arrCats = Array(cats)
         return arrCats.sorted()
-    }    
+    }
+    
+    struct PropertyKey {
+        static let transactions = "transactions"
+        static let categories = "categories"
+        static let earliestDate = "earliestDate"
+        static let latestDate = "latestDate"
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.transactions, forKey: PropertyKey.transactions)
+        aCoder.encode(self.categories, forKey: PropertyKey.categories)
+        aCoder.encode(self.earliestYearAndMonth, forKey: PropertyKey.earliestDate)
+        aCoder.encode(self.latestYearAndMonth, forKey: PropertyKey.latestDate)
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        guard let transacts = aDecoder.decodeObject(forKey: PropertyKey.transactions) as? [Int : [Int : [Transaction]]] else {
+            return nil
+        }
+        guard let cats = aDecoder.decodeObject(forKey: PropertyKey.categories) as? [String] else {
+            return nil
+        }
+        guard let earliestDate = aDecoder.decodeObject(forKey: PropertyKey.earliestDate) as? (Int, Int) else {
+            return nil
+        }
+        guard let latestDate = aDecoder.decodeObject(forKey: PropertyKey.latestDate) as? (Int, Int) else {
+            return nil
+        }
+        self.init()
+        self.transactions = transacts
+        self.categories = cats
+        self.earliestYearAndMonth = earliestDate
+        self.latestYearAndMonth = latestDate
+        
+    }
+    
+    static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
+    static let ArchiveURL = DocumentsDirectory.appendingPathComponent("user")
 }
