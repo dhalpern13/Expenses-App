@@ -80,7 +80,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        self.user = User()
+        if let savedUser = loadUserData() {
+            self.user = savedUser
+        } else {
+            self.user = User()
+        }
         
         self.dateFormatter = DateFormatter()
         self.dateFormatter!.dateStyle = .long
@@ -92,6 +96,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.currencyAmountFormatter?.maximumFractionDigits = 2
         
         return true
+    }
+    
+    func saveUserData() {
+        if user != nil {
+            NSKeyedArchiver.archiveRootObject(user!, toFile: User.ArchiveURL.path)
+        }
+    }
+    
+    private func loadUserData() -> User? {
+        return NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? User
     }
 
 }
