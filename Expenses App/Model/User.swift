@@ -34,6 +34,26 @@ class User {
         return toAdd
     }
     
+    func getTransactionsByYearAndMonth(year: Int, month: Int) -> [Transaction]{
+        if transactions[year]?[month] == nil {
+            return [];
+        } else {
+            return transactions[year]![month]!
+        }
+    }
+    
+    func getTransactionByCategory(_ category: String, year: Int, month: Int) -> [Transaction] {
+        var transactions: [Transaction] = []
+        if let monthTransactions = self.transactions[year]?[month] {
+            for transaction in monthTransactions {
+                if transaction.category == category {
+                    transactions.append(transaction)
+                }
+            }
+        }
+        return transactions
+    }
+    
     private func addTransToDictionary(_ transaction: Transaction) {
         let year = transaction.date.getYearNum()
         let month = transaction.date.getMonthNum()
@@ -99,19 +119,14 @@ class User {
         return total
     }
     
-    func getTransactionAtIndex(_ index: Int, year: Int, month: Int) -> Transaction?{
-        return self.transactions[year]?[month]?[index]
-    }
-    
-    func getIndexOfTransaction(_ transaction: Transaction) -> Int? {
-        return self.transactions[transaction.date.getYearNum()]?[transaction.date.getMonthNum()]?.index(of: transaction)
-    }
-    
-    func deleteTransactionAtIndex(_ index: Int, year: Int, month: Int) {
-        self.transactions[year]?[month]?.remove(at: index)
-    }
-    
-    func getCategoriesAlphabetized() -> [String] {
-        return categories.sorted()
+    func getCategoriesByYearAndMonth(year: Int, month: Int) -> [String] {
+        var cats:Set<String> = []
+        if let transactions = self.transactions[year]?[month] {
+            for transaction in transactions {
+                cats.insert(transaction.category)
+            }
+        }
+        let arrCats = Array(cats)
+        return arrCats.sorted()
     }    
 }
