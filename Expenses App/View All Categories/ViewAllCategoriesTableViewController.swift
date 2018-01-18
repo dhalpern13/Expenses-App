@@ -48,7 +48,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
             self.monthAndYear = (currentDate.getMonthNum(), currentDate.getYearNum())
         }
         
-        self.categories = self.user.getCategoriesAlphabetized()
+        self.categories = self.user.getCategoriesByYearAndMonth(year: self.year, month: self.month)
         
         self.categories = self.categories!.filter({ (category) -> Bool in
             if self.user.getTotalExpensesOfCategory(category, year: self.year, month: self.month) > 0 {
@@ -163,7 +163,9 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         super.prepare(for: segue, sender: sender)
         
         if let individualCategoryViewController = segue.destination as? IndividualCategoryTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            individualCategoryViewController.category = self.categories[indexPath.row]
+            if indexPath.section == 0 {
+                individualCategoryViewController.category = self.categories[indexPath.row]
+            }
             individualCategoryViewController.monthAndYear = self.monthAndYear!
             individualCategoryViewController.delegate = self
         }

@@ -12,7 +12,7 @@ extension Date {
     
     func getMonthNum() -> Int {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "mm"
+        dateFormatter.dateFormat = "MM"
         let strMonth = dateFormatter.string(from: self)
         let intMonth = Int(strMonth)
         return intMonth!

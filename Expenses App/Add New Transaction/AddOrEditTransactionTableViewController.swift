@@ -149,6 +149,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         
         self.saveButton.isEnabled = false
         
+        self.hideKeyboardWhenAnywhereInViewTapped()
+        
         if self.transactionToEdit == nil {
             self.navigationItem.title = "New Expense"
             self.date = Date()
@@ -251,11 +253,12 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
                 return true
             }
             else {
-                let currentText = self.amountTableViewCell?.amountTextEntry.text ?? ""
-                let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
-                if self.numberFormatter.number(from: (self.amountTableViewCell?.amountTextEntry.text)!) != nil {
-                    let split = replacementText.components(separatedBy: self.numberFormatter.decimalSeparator)
+                if self.numberFormatter.number(from: string) != nil {
+                    let split = string.components(separatedBy: self.numberFormatter.decimalSeparator)
                     let decimalDigits = split.count == 2 ? split.last ?? "" : ""
+                    if string[string.endIndex] == "." {
+                        let newString = string
+                    }
                     return decimalDigits.count <= 2
                 }
                 return false

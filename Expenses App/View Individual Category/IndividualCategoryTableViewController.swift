@@ -20,6 +20,8 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     
     var monthAndYear: (month: Int, year: Int)!
     
+    var transactions: [Transaction]!
+    
     var month: Int {
         get {
             return self.monthAndYear!.month
@@ -32,20 +34,28 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         }
     }
     
-    var category: String!
+    var category: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         self.navigationItem.title = category
+        
+        if self.category != nil {
+            self.transactions = self.user.getTransactionByCategory(self.category!, year: self.year, month: self.month)
+        } else {
+            self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
+        }
     }
     
     // MARK: Add Expense Delegate
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
         if let newExpense = expense, newExpense.category == category {
-            let rowOfNewTransaction = self.user.getIndexOfTransaction(newExpense)!
-            let indexPathOfNewTransction = IndexPath(row: rowOfNewTransaction, section: 0)
+            self.transactions.append(newExpense)
+            self.transactions.sort()
+            let rowOfNewExpense = self.transactions.index(of: newExpense)!
+            let indexPathOfNewTransction = IndexPath(row: rowOfNewExpense, section: 0)
             self.tableView.insertRows(at: [indexPathOfNewTransction], with: .none)
         }
         addExpenseController.dismiss(animated: true, completion: nil)
@@ -54,14 +64,15 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     // MARK: Edit Expense Delegate
     
     func didBeginEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        let rowOfTransaction = self.user.getIndexOfTransaction(expense)!
-        let indexPathOfTransaction = IndexPath(row: rowOfTransaction, section: 0)
+        let indexOfExpense = self.transactions.index(of: expense)!
+        self.transactions.remove(at: indexOfExpense)
+        let indexPathOfTransaction = IndexPath(row: indexOfExpense, section: 0)
         self.tableView.deleteRows(at: [indexPathOfTransaction], with: .none)
     }
     
     func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        let rowOfTransaction = self.user.getIndexOfTransaction(expense)!
-        let indexPathOfTransction = IndexPath(row: rowOfTransaction, section: 0)
+        let rowOfExpense = self.transactions.index(of: expense)!
+        let indexPathOfTransction = IndexPath(row: rowOfExpense, section: 0)
         self.tableView.insertRows(at: [indexPathOfTransction], with: .none)
         self.navigationController?.popViewController(animated: true)
     }
@@ -92,7 +103,9 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            self.user.deleteTransactionAtIndex(indexPath.row, year: self.year, month: self.month)
+            let expenseToDelete = self.transactions[indexPath.row]
+            self.transactions.remove(at: indexPath.row)
+            self.user.removeTransaction(expenseToDelete)
             self.tableView.deleteRows(at: [indexPath], with: .fade)
         }
     }
