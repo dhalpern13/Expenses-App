@@ -249,19 +249,24 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         if textField.tag == 0 {
-            if string.isEmpty {
+            let currentText = textField.text ?? ""
+            let replacementText = (currentText as NSString).replacingCharacters(in: range, with: string)
+            
+            if replacementText.isEmpty {
                 return true
             }
             else {
-                if self.numberFormatter.number(from: string) != nil {
-                    let split = string.components(separatedBy: self.numberFormatter.decimalSeparator)
-                    let decimalDigits = split.count == 2 ? split.last ?? "" : ""
-                    if string[string.endIndex] == "." {
-                        let newString = string
+                if self.numberFormatter.number(from: replacementText) != nil {
+                    let split = replacementText.components(separatedBy: ".")
+                    if split.count == 2 {
+                        let decimalDigits = split.last!
+                        return decimalDigits.count <= 2
+                    } else {
+                        return true
                     }
-                    return decimalDigits.count <= 2
+                } else {
+                    return false
                 }
-                return false
             }
         } else {
             return true
