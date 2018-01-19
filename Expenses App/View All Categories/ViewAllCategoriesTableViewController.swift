@@ -171,6 +171,8 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
             individualCategoryViewController.monthAndYear = self.monthAndYear!
             if indexPath.section == 0 {
                 individualCategoryViewController.category = self.categories[indexPath.row]
+            } else {
+                individualCategoryViewController.category = nil
             }
             individualCategoryViewController.delegate = self
         }
