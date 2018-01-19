@@ -59,30 +59,30 @@ class User: NSObject, NSCoding {
         if self.transactions[year] == nil{
             self.transactions[year] = [:]
         }
-        var yearTransactions = self.transactions[year]!
-        if yearTransactions[month] == nil {
-            yearTransactions[month] = []
+        if self.transactions[year]![month] == nil {
+            self.transactions[year]![month] = []
         }
-        var monthTransactions = yearTransactions[month]!
-        monthTransactions.append(transaction)
-        monthTransactions.sort()
+        self.transactions[year]![month]!.append(transaction)
+        self.transactions[year]![month]!.sort()
         if(year <= earliestYearAndMonth.year) {
-            earliestYearAndMonth.year = year;
-            if(month < earliestYearAndMonth.month) {
-                earliestYearAndMonth.month = month;
+            self.earliestYearAndMonth.year = year;
+            if(month < self.earliestYearAndMonth.month) {
+                self.earliestYearAndMonth.month = month;
             }
         }
-        if(year >= latestYearAndMonth.year) {
-            latestYearAndMonth.year = year;
-            if(month > latestYearAndMonth.month) {
-                latestYearAndMonth.month = month;
+        if(year >= self.latestYearAndMonth.year) {
+            self.latestYearAndMonth.year = year;
+            if(month > self.latestYearAndMonth.month) {
+                self.latestYearAndMonth.month = month;
             }
         }
     }
     
     func removeTransaction(_ transaction: Transaction) {
-        if var monthTransactions = self.transactions[transaction.date.getYearNum()]?[transaction.date.getMonthNum()] {
-            monthTransactions = monthTransactions.filter(){$0 !== transaction}
+        let year = transaction.date.getYearNum()
+        let month = transaction.date.getMonthNum()
+        if self.transactions[year]?[month] != nil {
+            self.transactions[year]![month]! = self.transactions[year]![month]!.filter() {$0 !== transaction}
         }
     }
     
