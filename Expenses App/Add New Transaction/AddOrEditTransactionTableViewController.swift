@@ -9,9 +9,8 @@
 import UIKit
 
 protocol EditExpenseDelegate {
-    func didBeginEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction)
     
-    func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction)
+    func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?)
 }
 
 protocol AddExpenseDelegate {
@@ -168,12 +167,6 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        if self.transactionToEdit != nil {
-            self.editExpenseDelegate?.didBeginEditing(self, expense: self.transactionToEdit!)
-        }
-    }
-    
     // MARK: Select Category Delegate
     
     func didFinishSelecting(_ selectCategoryController: SelectCategoryTableViewController, category: String?) {
@@ -316,7 +309,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     @IBAction func cancel(_ sender: Any) {
         if self.transactionToEdit != nil {
-            self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
+            self.editExpenseDelegate?.didFinishEditing(self, expense: nil)
         } else {
             self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
         }

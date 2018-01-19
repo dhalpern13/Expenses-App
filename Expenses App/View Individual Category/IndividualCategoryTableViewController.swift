@@ -60,21 +60,23 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     
     // MARK: Edit Expense Delegate
     
-    func didBeginEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        let indexOfExpense = self.transactions.index(of: expense)!
-        self.transactions.remove(at: indexOfExpense)
-        let indexPathOfTransaction = IndexPath(row: indexOfExpense, section: 0)
-        self.tableView.deleteRows(at: [indexPathOfTransaction], with: .none)
-    }
-    
-    func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        if expense.date.getMonthNum() == self.month && expense.date.getYearNum() == self.year {
-            self.transactions.append(expense)
-            self.transactions.sort()
-            let rowOfExpense = self.transactions.index(of: expense)!
-            let indexPathOfTransction = IndexPath(row: rowOfExpense, section: 0)
-            self.tableView.insertRows(at: [indexPathOfTransction], with: .none)
-            self.navigationController?.popViewController(animated: true)
+    func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
+        if let editedExpense = expense {
+            let originalIndexOfExpense = self.transactions.index(of: editedExpense)!
+            let originalIndexPathOfExpense = IndexPath(row: originalIndexOfExpense, section: 0)
+            
+            if editedExpense.date.getMonthNum() == self.month && editedExpense.date.getYearNum() == self.year {
+                // Sort based on the modified attributes of the expense, and then add it back into the tableview.
+                self.transactions.sort()
+                let newIndexOfExpense = self.transactions.index(of: editedExpense)!
+                let newIndexPathOfExpense = IndexPath(row: newIndexOfExpense, section: 0)
+                self.tableView.moveRow(at: originalIndexPathOfExpense, to: newIndexPathOfExpense)
+                self.tableView.reloadRows(at: [newIndexPathOfExpense], with: .none)
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.transactions.remove(at: originalIndexOfExpense)
+                self.tableView.deleteRows(at: [originalIndexPathOfExpense], with: .none)
+            }
         }
     }
 
