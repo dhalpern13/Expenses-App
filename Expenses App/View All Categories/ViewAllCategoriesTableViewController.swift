@@ -105,7 +105,6 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     func didFinishViewing(_ viewCategoryController: IndividualCategoryTableViewController) {
         self.loadCategories()
         self.tableView.reloadData()
-        self.navigationController?.popViewController(animated: true)
     }
     
     // MARK: Load Title

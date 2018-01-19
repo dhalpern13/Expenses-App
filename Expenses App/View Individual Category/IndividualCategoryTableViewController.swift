@@ -46,8 +46,6 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         } else {
             self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
         }
-        
-        self.navigationItem.rightBarButtonItem?.action
     }
     
     // MARK: Add Expense Delegate
@@ -124,6 +122,10 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         }
     }
     
+    override func willMove(toParentViewController parent: UIViewController?) {
+        self.delegate?.didFinishViewing(self)
+    }
+    
     // MARK: Action
     
     @IBAction func addNewExpense(_ sender: Any) {
@@ -133,9 +135,5 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         addExpenseTableViewController.addExpenseDelegate = self
         addExpenseTableViewController.categoryToSuggest = self.category
         self.present(rootController, animated: true, completion: nil)
-    }
-    
-    @objc func goBack() {
-        
     }
 }
