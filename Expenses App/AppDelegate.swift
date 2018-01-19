@@ -106,10 +106,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func loadUserData() -> User? {
-        return NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? User
-    }
-    
-    func retrieveProducts() -> User? {
         guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? Data else { return nil }
         do {
             let newUser = try PropertyListDecoder().decode(User.self, from: data)
