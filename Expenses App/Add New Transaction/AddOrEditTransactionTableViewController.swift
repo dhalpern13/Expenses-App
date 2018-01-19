@@ -22,18 +22,9 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
 
     // MARK: Properties
     
-    var addExpenseDelegate: AddExpenseDelegate? {
-        didSet {
-            self.transactionToEdit = nil
-            self.editExpenseDelegate = nil
-        }
-    }
+    var addExpenseDelegate: AddExpenseDelegate?
     
-    var editExpenseDelegate: EditExpenseDelegate? {
-        didSet {
-            self.addExpenseDelegate = nil
-        }
-    }
+    var editExpenseDelegate: EditExpenseDelegate?
     
     var numberFormatter = NumberFormatter()
     
