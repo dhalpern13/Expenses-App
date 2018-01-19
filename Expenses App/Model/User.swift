@@ -66,16 +66,16 @@ class User: Codable {
         self.transactions[year]![month]!.append(transaction)
         self.transactions[year]![month]! = self.transactions[year]![month]!.sorted()
         if(year <= earliestYearAndMonth.year) {
-            self.earliestYearAndMonth.year = year;
             if(month < self.earliestYearAndMonth.month || year < earliestYearAndMonth.year) {
                 self.earliestYearAndMonth.month = month;
             }
+            self.earliestYearAndMonth.year = year;
         }
         if(year >= self.latestYearAndMonth.year) {
-            self.latestYearAndMonth.year = year;
             if(month > self.latestYearAndMonth.month || year > earliestYearAndMonth.year) {
                 self.latestYearAndMonth.month = month;
             }
+            self.latestYearAndMonth.year = year;
         }
     }
     
