@@ -8,20 +8,20 @@
 
 import Foundation
 
-class Transaction:Comparable{
+class Transaction: NSObject, Comparable, NSCoding{
     
     
     var date: Date
     
-    var description: String
+    var descript: String
     
     var amount: Decimal
     
     var category: String
     
-    init(date: Date, description: String, amount: Decimal, category: String) {
+    init(date: Date, descript: String, amount: Decimal, category: String) {
         self.date = date
-        self.description = description
+        self.descript = descript
         self.amount = amount
         self.category = category
     }
@@ -32,6 +32,37 @@ class Transaction:Comparable{
     
     static func <(lhs: Transaction, rhs: Transaction) -> Bool {
         return lhs.date < rhs.date
+    }
+    
+    struct PropertyKey {
+        static let date = "date"
+        static let descript = "descript"
+        static let amount = "amount"
+        static let category = "category"
+    }
+    
+    func encode(with aCoder: NSCoder) {
+        aCoder.encode(self.date, forKey: PropertyKey.date)
+        aCoder.encode(self.descript, forKey: PropertyKey.descript)
+        aCoder.encode(self.amount, forKey: PropertyKey.amount)
+        aCoder.encode(self.category, forKey: PropertyKey.category)
+    }
+    
+    required convenience init?(coder aDecoder: NSCoder) {
+        guard let date = aDecoder.decodeObject(forKey: PropertyKey.date) as? Date else {
+            return nil
+        }
+        guard let decsript = aDecoder.decodeObject(forKey: PropertyKey.descript) as? String else {
+            return nil
+        }
+        guard let amount = aDecoder.decodeObject(forKey: PropertyKey.amount) as? Decimal else {
+            return nil
+        }
+        guard let category = aDecoder.decodeObject(forKey: PropertyKey.category) as? String else {
+            return nil
+        }
+        self.init(date: date, descript: decsript, amount: amount, category: category)
+        
     }
     
     

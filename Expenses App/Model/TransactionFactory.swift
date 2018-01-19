@@ -10,7 +10,7 @@ import Foundation
 
 
 class TransactionFactory {
-    static func getTransaction(date: Date, description: String, amount: Decimal, category: String) -> Transaction {
-        return Transaction(date: date, description: description, amount: amount, category: category)
+    static func getTransaction(date: Date, descript: String, amount: Decimal, category: String) -> Transaction {
+        return Transaction(date: date, descript: descript, amount: amount, category: category)
     }
 }

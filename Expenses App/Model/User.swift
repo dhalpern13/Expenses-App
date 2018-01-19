@@ -25,10 +25,10 @@ class User: NSObject, NSCoding {
         self.categories = self.categories.filter(){$0 != category}
     }
     
-    func addTransaction(date: Date, description: String, amount: Decimal, category: String) -> Transaction {
+    func addTransaction(date: Date, descript: String, amount: Decimal, category: String) -> Transaction {
         self.removeCategory(category)
         self.categories.insert(category, at: 0)
-        let toAdd = TransactionFactory.getTransaction(date: date, description: description, amount: amount, category: category)
+        let toAdd = TransactionFactory.getTransaction(date: date, descript: descript, amount: amount, category: category)
         self.addTransToDictionary(toAdd)
         return toAdd
     }
@@ -63,7 +63,7 @@ class User: NSObject, NSCoding {
             self.transactions[year]![month] = []
         }
         self.transactions[year]![month]!.append(transaction)
-        self.transactions[year]![month]!.sort()
+        self.transactions[year]![month]! = self.transactions[year]![month]!.sorted()
         if(year <= earliestYearAndMonth.year) {
             self.earliestYearAndMonth.year = year;
             if(month < self.earliestYearAndMonth.month) {
@@ -86,10 +86,10 @@ class User: NSObject, NSCoding {
         }
     }
     
-    func editTransaction(_ transaction: Transaction, date: Date, description: String, amount: Decimal, category: String) {
+    func editTransaction(_ transaction: Transaction, date: Date, descript: String, amount: Decimal, category: String) {
         self.removeTransaction(transaction)
         transaction.date = date
-        transaction.description = description
+        transaction.descript = descript
         transaction.amount = amount
         transaction.category = category
         self.addTransToDictionary(transaction)
