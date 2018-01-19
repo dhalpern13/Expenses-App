@@ -79,9 +79,8 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     // MARK: Add Expense Delegate
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
-        if let newExepense = expense {
-            
-            let categoryOfNewExpense = newExepense.category
+        if let newExpense = expense, newExpense.date.getMonthNum() == self.month, newExpense.date.getYearNum() == self.year {
+            let categoryOfNewExpense = newExpense.category
             
             if let rowOfCategory = self.categories!.index(of: categoryOfNewExpense) {
                 let indexPathOfCategory = IndexPath(row: rowOfCategory, section: 0)
@@ -169,10 +168,10 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         super.prepare(for: segue, sender: sender)
         
         if let individualCategoryViewController = segue.destination as? IndividualCategoryTableViewController, let indexPath = tableView.indexPathForSelectedRow {
+            individualCategoryViewController.monthAndYear = self.monthAndYear!
             if indexPath.section == 0 {
                 individualCategoryViewController.category = self.categories[indexPath.row]
             }
-            individualCategoryViewController.monthAndYear = self.monthAndYear!
             individualCategoryViewController.delegate = self
         }
     }

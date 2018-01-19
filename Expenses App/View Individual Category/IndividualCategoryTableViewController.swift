@@ -34,17 +34,14 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         }
     }
     
-    var category: String?
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        self.navigationItem.title = category
-        
-        if self.category != nil {
-            self.transactions = self.user.getTransactionByCategory(self.category!, year: self.year, month: self.month)
-        } else {
-            self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
+    var category: String? {
+        didSet {
+            if self.category != nil {
+                self.transactions = self.user.getTransactionByCategory(self.category!, year: self.year, month: self.month)
+            } else {
+                self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
+            }
+            self.navigationItem.title = category
         }
     }
     
@@ -117,7 +114,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         super.prepare(for: segue, sender: sender)
         
         if let editExpenseController = segue.destination as? AddOrEditTransactionTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            editExpenseController.transactionToEdit = self.user.transactions[self.year]?[self.month]?[indexPath.row]
+            editExpenseController.transactionToEdit = self.transactions[indexPath.row]
             editExpenseController.editExpenseDelegate = self
         }
     }
