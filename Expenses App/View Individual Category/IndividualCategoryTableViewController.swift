@@ -46,6 +46,8 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         } else {
             self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
         }
+        
+        self.navigationItem.rightBarButtonItem?.action
     }
     
     // MARK: Add Expense Delegate
@@ -71,10 +73,14 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     }
     
     func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction) {
-        let rowOfExpense = self.transactions.index(of: expense)!
-        let indexPathOfTransction = IndexPath(row: rowOfExpense, section: 0)
-        self.tableView.insertRows(at: [indexPathOfTransction], with: .none)
-        self.navigationController?.popViewController(animated: true)
+        if expense.date.getMonthNum() == self.month && expense.date.getYearNum() == self.year {
+            self.transactions.append(expense)
+            self.transactions.sort()
+            let rowOfExpense = self.transactions.index(of: expense)!
+            let indexPathOfTransction = IndexPath(row: rowOfExpense, section: 0)
+            self.tableView.insertRows(at: [indexPathOfTransction], with: .none)
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 
     // MARK: UITableView Delegate
@@ -127,5 +133,9 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         addExpenseTableViewController.addExpenseDelegate = self
         addExpenseTableViewController.categoryToSuggest = self.category
         self.present(rootController, animated: true, completion: nil)
+    }
+    
+    @objc func goBack() {
+        
     }
 }

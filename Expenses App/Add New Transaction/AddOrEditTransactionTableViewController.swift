@@ -319,7 +319,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     @IBAction func save(_ sender: Any) {
         if self.transactionToEdit != nil {
-            self.user.editTransaction(self.transactionToEdit!, date: self.date, descript: self.description, amount: self.amount!, category: self.category!)
+            self.user.editTransaction(self.transactionToEdit!, date: self.date, descript: self.transactionDescription!, amount: self.amount!, category: self.category!)
             self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
         } else {
             let newTransaction = self.user.addTransaction(date: self.date, descript: self.transactionDescription!, amount: self.amount!, category: self.category!)
