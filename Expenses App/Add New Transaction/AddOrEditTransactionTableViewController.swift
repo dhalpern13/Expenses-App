@@ -313,8 +313,11 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     }
     
     @IBAction func cancel(_ sender: Any) {
-        self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
-        self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
+        if self.transactionToEdit != nil {
+            self.editExpenseDelegate?.didFinishEditing(self, expense: self.transactionToEdit!)
+        } else {
+            self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
+        }
     }
     
     @IBAction func save(_ sender: Any) {
