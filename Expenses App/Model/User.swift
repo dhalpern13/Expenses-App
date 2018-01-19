@@ -16,6 +16,9 @@ class User: NSObject, NSCoding {
     var earliestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
     var latestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
     
+    override init(){
+        super.init()
+    }
     
     func addCategory(_ category: String) {
         self.categories.append(category)
@@ -129,39 +132,18 @@ class User: NSObject, NSCoding {
         return arrCats.sorted()
     }
     
-    struct PropertyKey {
-        static let transactions = "transactions"
-        static let categories = "categories"
-        static let earliestDate = "earliestDate"
-        static let latestDate = "latestDate"
+    required init?(coder aDecoder: NSCoder) {
+        self.transactions = aDecoder.decodeObject(forKey: "transactoins") as! [Int : [Int : [Transaction]]]
+        self.categories = aDecoder.decodeObject(forKey: "categories") as! [String]
+        self.earliestYearAndMonth = aDecoder.decodeObject(forKey: "earliestDate") as! (Int, Int)
+        self.latestYearAndMonth = aDecoder.decodeObject(forKey: "latestDate") as! (Int, Int)
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.transactions, forKey: PropertyKey.transactions)
-        aCoder.encode(self.categories, forKey: PropertyKey.categories)
-        aCoder.encode(self.earliestYearAndMonth, forKey: PropertyKey.earliestDate)
-        aCoder.encode(self.latestYearAndMonth, forKey: PropertyKey.latestDate)
-    }
-    
-    required convenience init?(coder aDecoder: NSCoder) {
-        guard let transacts = aDecoder.decodeObject(forKey: PropertyKey.transactions) as? [Int : [Int : [Transaction]]] else {
-            return nil
-        }
-        guard let cats = aDecoder.decodeObject(forKey: PropertyKey.categories) as? [String] else {
-            return nil
-        }
-        guard let earliestDate = aDecoder.decodeObject(forKey: PropertyKey.earliestDate) as? (Int, Int) else {
-            return nil
-        }
-        guard let latestDate = aDecoder.decodeObject(forKey: PropertyKey.latestDate) as? (Int, Int) else {
-            return nil
-        }
-        self.init()
-        self.transactions = transacts
-        self.categories = cats
-        self.earliestYearAndMonth = earliestDate
-        self.latestYearAndMonth = latestDate
-        
+        aCoder.encode(self.transactions, forKey: "transactions")
+        aCoder.encode(self.categories, forKey: "categories")
+        aCoder.encode(self.earliestYearAndMonth, forKey: "earliestDate")
+        aCoder.encode(self.latestYearAndMonth, forKey: "latestDate")
     }
     
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!

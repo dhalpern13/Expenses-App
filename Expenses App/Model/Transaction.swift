@@ -34,35 +34,18 @@ class Transaction: NSObject, Comparable, NSCoding{
         return lhs.date < rhs.date
     }
     
-    struct PropertyKey {
-        static let date = "date"
-        static let descript = "descript"
-        static let amount = "amount"
-        static let category = "category"
+    required init?(coder aDecoder: NSCoder) {
+        self.date = aDecoder.decodeObject(forKey: "date") as! Date
+        self.descript = aDecoder.decodeObject(forKey: "descript") as! String
+        self.amount = aDecoder.decodeObject(forKey: "amount") as! Decimal
+        self.category = aDecoder.decodeObject(forKey: "category") as! String
     }
     
     func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.date, forKey: PropertyKey.date)
-        aCoder.encode(self.descript, forKey: PropertyKey.descript)
-        aCoder.encode(self.amount, forKey: PropertyKey.amount)
-        aCoder.encode(self.category, forKey: PropertyKey.category)
-    }
-    
-    required convenience init?(coder aDecoder: NSCoder) {
-        guard let date = aDecoder.decodeObject(forKey: PropertyKey.date) as? Date else {
-            return nil
-        }
-        guard let decsript = aDecoder.decodeObject(forKey: PropertyKey.descript) as? String else {
-            return nil
-        }
-        guard let amount = aDecoder.decodeObject(forKey: PropertyKey.amount) as? Decimal else {
-            return nil
-        }
-        guard let category = aDecoder.decodeObject(forKey: PropertyKey.category) as? String else {
-            return nil
-        }
-        self.init(date: date, descript: decsript, amount: amount, category: category)
-        
+        aCoder.encode(self.date, forKey: "date")
+        aCoder.encode(self.descript, forKey: "descript")
+        aCoder.encode(self.amount, forKey: "amount")
+        aCoder.encode(self.category, forKey: "category")
     }
     
     

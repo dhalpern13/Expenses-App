@@ -91,7 +91,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         let cellIdentifier = "TransactionTableViewCell"
         let cell = tableView.dequeueReusableCell(withIdentifier: cellIdentifier, for: indexPath) as! TransactionTableViewCell
         let transaction = self.transactions[indexPath.row]
-        cell.descriptionLabel.text = transaction.description
+        cell.descriptionLabel.text = transaction.descript
         cell.dateLabel.text = self.dateFormatter.string(from: transaction.date)
         cell.amountLabel.text = self.currencyAmountFormatter.string(from: transaction.amount as NSNumber)
         return cell
