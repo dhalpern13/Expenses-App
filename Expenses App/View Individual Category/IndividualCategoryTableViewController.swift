@@ -51,7 +51,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     // MARK: Add Expense Delegate
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
-        if let newExpense = expense, newExpense.category == category {
+        if let newExpense = expense, newExpense.category == category, newExpense.date.getMonthNum() == self.month, newExpense.date.getYearNum() ==  self.year {
             self.transactions.append(newExpense)
             self.transactions.sort()
             let rowOfNewExpense = self.transactions.index(of: newExpense)!
