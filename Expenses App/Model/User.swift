@@ -9,16 +9,14 @@
 import Foundation
 
 
-class User: NSObject, NSCoding {
+class User: Codable {
     
     var transactions : [Int : [Int : [Transaction]]] = [:]
     var categories : [String] = []
     var earliestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
     var latestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
     
-    override init(){
-        super.init()
-    }
+    init(){}
     
     func addCategory(_ category: String) {
         self.categories.append(category)
@@ -69,13 +67,13 @@ class User: NSObject, NSCoding {
         self.transactions[year]![month]! = self.transactions[year]![month]!.sorted()
         if(year <= earliestYearAndMonth.year) {
             self.earliestYearAndMonth.year = year;
-            if(month < self.earliestYearAndMonth.month) {
+            if(month < self.earliestYearAndMonth.month || year < earliestYearAndMonth.year) {
                 self.earliestYearAndMonth.month = month;
             }
         }
         if(year >= self.latestYearAndMonth.year) {
             self.latestYearAndMonth.year = year;
-            if(month > self.latestYearAndMonth.month) {
+            if(month > self.latestYearAndMonth.month || year > earliestYearAndMonth.year) {
                 self.latestYearAndMonth.month = month;
             }
         }
@@ -132,18 +130,35 @@ class User: NSObject, NSCoding {
         return arrCats.sorted()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        self.transactions = aDecoder.decodeObject(forKey: "transactoins") as! [Int : [Int : [Transaction]]]
-        self.categories = aDecoder.decodeObject(forKey: "categories") as! [String]
-        self.earliestYearAndMonth = aDecoder.decodeObject(forKey: "earliestDate") as! (Int, Int)
-        self.latestYearAndMonth = aDecoder.decodeObject(forKey: "latestDate") as! (Int, Int)
+    enum CodingKeysUser: String, CodingKey {
+        case transactions
+        case categories
+        case earliestMonth
+        case earliestYear
+        case latestMonth
+        case latestYear
     }
     
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.transactions, forKey: "transactions")
-        aCoder.encode(self.categories, forKey: "categories")
-        aCoder.encode(self.earliestYearAndMonth, forKey: "earliestDate")
-        aCoder.encode(self.latestYearAndMonth, forKey: "latestDate")
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeysUser.self)
+        try container.encode(transactions, forKey: .transactions)
+        try container.encode(categories, forKey: .categories)
+        try container.encode(earliestYearAndMonth.month, forKey: .earliestMonth)
+        try container.encode(earliestYearAndMonth.year, forKey: .earliestYear)
+        try container.encode(latestYearAndMonth.month, forKey: .latestMonth)
+        try container.encode(latestYearAndMonth.year, forKey: .latestYear)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeysUser.self)
+        transactions = try values.decode([Int : [Int : [Transaction]]].self, forKey: .transactions)
+        categories = try values.decode([String].self, forKey: .categories)
+        let earliestMonth = try values.decode(Int.self, forKey: .earliestMonth)
+        let earliestYear = try values.decode(Int.self, forKey: .earliestYear)
+        earliestYearAndMonth = (earliestYear, earliestMonth)
+        let latestMonth = try values.decode(Int.self, forKey: .latestMonth)
+        let latestYear = try values.decode(Int.self, forKey: .latestYear)
+        latestYearAndMonth = (latestYear, latestMonth)
     }
     
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!

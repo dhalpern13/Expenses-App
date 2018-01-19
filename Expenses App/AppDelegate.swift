@@ -95,12 +95,29 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func saveUserData() {
         if user != nil {
-            NSKeyedArchiver.archiveRootObject(user!, toFile: User.ArchiveURL.path)
+            do {
+                let data = try PropertyListEncoder().encode(user!)
+                let success = NSKeyedArchiver.archiveRootObject(data, toFile: User.ArchiveURL.path)
+                print(success ? "Successful save" : "Save Failed")
+            } catch {
+                print("Save Failed")
+            }
         }
     }
     
     private func loadUserData() -> User? {
         return NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? User
+    }
+    
+    func retrieveProducts() -> User? {
+        guard let data = NSKeyedUnarchiver.unarchiveObject(withFile: User.ArchiveURL.path) as? Data else { return nil }
+        do {
+            let newUser = try PropertyListDecoder().decode(User.self, from: data)
+            return newUser
+        } catch {
+            print("Retrieve Failed")
+            return nil
+        }
     }
 }
 

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Transaction: NSObject, Comparable, NSCoding{
+class Transaction: Comparable, Codable{
     
     
     var date: Date
@@ -34,18 +34,27 @@ class Transaction: NSObject, Comparable, NSCoding{
         return lhs.date < rhs.date
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        self.date = aDecoder.decodeObject(forKey: "date") as! Date
-        self.descript = aDecoder.decodeObject(forKey: "descript") as! String
-        self.amount = aDecoder.decodeObject(forKey: "amount") as! Decimal
-        self.category = aDecoder.decodeObject(forKey: "category") as! String
+    enum CodingKeys: String, CodingKey {
+        case date
+        case descript
+        case amount
+        case category
     }
     
-    func encode(with aCoder: NSCoder) {
-        aCoder.encode(self.date, forKey: "date")
-        aCoder.encode(self.descript, forKey: "descript")
-        aCoder.encode(self.amount, forKey: "amount")
-        aCoder.encode(self.category, forKey: "category")
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(date, forKey: .date)
+        try container.encode(descript, forKey: .descript)
+        try container.encode(amount, forKey: .amount)
+        try container.encode(category, forKey: .category)
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        date = try values.decode(Date.self, forKey: .date)
+        descript = try values.decode(String.self, forKey: .descript)
+        amount = try values.decode(Decimal.self, forKey: .amount)
+        category = try values.decode(String.self, forKey: .category)
     }
     
     
