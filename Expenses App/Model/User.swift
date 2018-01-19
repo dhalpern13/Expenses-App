@@ -19,7 +19,8 @@ class User: Codable {
     init(){}
     
     func addCategory(_ category: String) {
-        self.categories.append(category)
+        self.removeCategory(category)
+        categories.insert(category, at: 0)
     }
     
     func removeCategory(_ category: String) {
@@ -27,8 +28,7 @@ class User: Codable {
     }
     
     func addTransaction(date: Date, descript: String, amount: Decimal, category: String) -> Transaction {
-        self.removeCategory(category)
-        self.categories.insert(category, at: 0)
+        self.addCategory(category)
         let toAdd = TransactionFactory.getTransaction(date: date, descript: descript, amount: amount, category: category)
         self.addTransToDictionary(toAdd)
         return toAdd
