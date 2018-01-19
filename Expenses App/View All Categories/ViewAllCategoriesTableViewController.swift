@@ -52,7 +52,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         
         self.loadCategories()
         
-        loadTitle()
+        self.loadTitle()
     }
     
     func loadCategories() {
