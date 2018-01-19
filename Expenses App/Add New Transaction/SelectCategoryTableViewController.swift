@@ -16,6 +16,8 @@ class SelectCategoryTableViewController: UITableViewController {
     
     // MARK: Properties
     
+    var addCategoryAlertActionSaveAction: UIAlertAction?
+    
     var delegate: SelectCategoryDelegate?
     
     var categories: [String]!
@@ -56,7 +58,7 @@ class SelectCategoryTableViewController: UITableViewController {
         alertController.addAction(cancelAction)
         
         let addCategoryAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.default, handler: { (action) in
-            if let newCategory = alertController.textFields?[0].text, !newCategory.isEmpty {
+            if let newCategory = alertController.textFields?[0].text {
                 let newRow = self.categories.count
                 let indexPath = IndexPath(row: newRow, section: 0)
                 self.user.addCategory(newCategory)
@@ -64,13 +66,24 @@ class SelectCategoryTableViewController: UITableViewController {
                 self.tableView.insertRows(at: [indexPath], with: .top)
             }
         })
+        self.addCategoryAlertActionSaveAction = addCategoryAction
+        addCategoryAction.isEnabled = false
         alertController.addAction(addCategoryAction)
         
         alertController.addTextField(configurationHandler: { (textfield) in
             textfield.placeholder = "Category"
+            textfield.addTarget(self, action: #selector(self.handleTextFieldChange(_:)), for: .editingChanged)
         })
         
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc func handleTextFieldChange(_ sender: UITextField) {
+        if sender.text != nil && !sender.text!.isEmpty {
+            self.addCategoryAlertActionSaveAction?.isEnabled = true
+        } else {
+            self.addCategoryAlertActionSaveAction?.isEnabled = false
+        }
     }
     
     @IBAction func handleCancel(_ sender: Any) {

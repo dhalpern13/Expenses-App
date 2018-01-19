@@ -15,6 +15,8 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     var monthAndYear: (month: Int, year: Int)? {
         didSet {
             if oldValue != nil && (oldValue?.month != self.monthAndYear?.month || oldValue?.year != self.monthAndYear?.year) {
+                self.loadCategories()
+                self.loadTitle()
                 self.tableView?.reloadData()
             }
         }
