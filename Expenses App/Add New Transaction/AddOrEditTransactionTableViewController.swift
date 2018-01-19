@@ -169,7 +169,9 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        self.editExpenseDelegate?.didBeginEditing(self, expense: self.transactionToEdit!)
+        if self.transactionToEdit != nil {
+            self.editExpenseDelegate?.didBeginEditing(self, expense: self.transactionToEdit!)
+        }
     }
     
     // MARK: Select Category Delegate
