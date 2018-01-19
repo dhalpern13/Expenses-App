@@ -39,9 +39,10 @@ class SelectMonthTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        let year = self.currentYear - section
+        if year == self.currentYear {
             return self.currentMonth
-        } else if self.startYear - section == 0 {
+        } else if year == self.startYear {
             return 12 - self.startMonth + 1
         } else {
             return 12
@@ -54,15 +55,14 @@ class SelectMonthTableViewController: UITableViewController {
     }
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let yearOfSection = self.currentYear - indexPath.section
-        if yearOfSection == self.currentYear || yearOfSection > self.startYear {
+        let year = self.currentYear - indexPath.section
+        if year == self.currentYear {
             let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-            cell.textLabel!.text = self.getMonth(from: indexPath.row + 1)
+            cell.textLabel!.text = self.getMonth(from: self.currentMonth - indexPath.row)
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-            let monthNumber = self.startMonth + indexPath.row
-            cell.textLabel!.text = self.getMonth(from: monthNumber)
+            cell.textLabel!.text = self.getMonth(from: 12 - indexPath.row)
             return cell
         }
     }
