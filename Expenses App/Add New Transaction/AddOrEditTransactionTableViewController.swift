@@ -31,7 +31,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     private var date: Date! {
         didSet {
-            self.dateTableViewCell?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
+            self.dateTableViewCell?.textLabel?.text = self.dateFormatter.string(from: self.date)
             self.updateSaveButtonState()
         }
     }
@@ -56,8 +56,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     private var category: String? {
         didSet {
-            self.selectCategoryTableViewCell?.detailTextLabel?.text = self.category
-            self.selectCategoryTableViewCell?.detailTextLabel?.textColor = nil
+            self.selectCategoryTableViewCell?.textLabel?.text = self.category
+            self.selectCategoryTableViewCell?.textLabel?.textColor = nil
             self.updateSaveButtonState()
         }
     }
@@ -83,7 +83,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     private var dateTableViewCell: UITableViewCell? {
         willSet {
-            newValue?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
+            newValue?.textLabel?.text = self.dateFormatter.string(from: self.date)
         }
     }
     
@@ -121,7 +121,10 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     private var selectCategoryTableViewCell: UITableViewCell? {
         willSet {
-            newValue?.detailTextLabel?.text = self.category
+            if self.category != nil {
+                newValue?.textLabel?.text = self.category
+                newValue?.textLabel?.textColor = nil
+            }
         }
     }
     
