@@ -12,52 +12,41 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     
     // MARK: Properties
     
-    var monthAndYear: (month: Int, year: Int)? {
+    private var monthAndYear: (month: Int, year: Int) = {
+            let currentDate = Date()
+            return (currentDate.getMonthNum(), currentDate.getYearNum())
+        }() {
         didSet {
-            if oldValue != nil && (oldValue?.month != self.monthAndYear?.month || oldValue?.year != self.monthAndYear?.year) {
-                self.loadCategories()
-                self.loadTitle()
-                self.tableView?.reloadData()
-            }
+            self.loadCategories()
+            self.loadTitle()
+            self.tableView?.reloadData()
         }
     }
     
-    var monthAndYearString: String {
+    private var monthAndYearString: String {
         get {
             return self.getMonth(from: self.month) + " \(self.year)"
         }
     }
     
-    var month: Int {
+    private var month: Int {
         get {
-            return self.monthAndYear!.month
+            return self.monthAndYear.month
         }
     }
     
-    var year: Int {
+    private var year: Int {
         get {
-           return self.monthAndYear!.year
+           return self.monthAndYear.year
         }
     }
     
-    var categories: [String]!
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        if self.monthAndYear?.month == nil || self.monthAndYear?.year == nil {
-            let currentDate = Date()
-            self.monthAndYear = (currentDate.getMonthNum(), currentDate.getYearNum())
-        }
-        
-        self.loadCategories()
-        
-        self.loadTitle()
-    }
+    private var categories: [String]!
+    
+    // MARK: Setup
     
     func loadCategories() {
         self.categories = self.user.getCategoriesByYearAndMonth(year: self.year, month: self.month)
-        self.categories.sort()
         self.categories = self.categories!.filter({ (category) -> Bool in
             if self.user.getTotalExpensesOfCategory(category, year: self.year, month: self.month) > 0 {
                 return true
@@ -65,12 +54,40 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
                 return false
             }
         })
+        self.categories.sort()
+    }
+    
+    func loadTitle() {
+        let monthLabel = UILabel()
+        monthLabel.text = self.monthAndYearString
+        monthLabel.font = UIFont.boldSystemFont(ofSize: 17)
+        monthLabel.sizeToFit()
+        
+        let stackView = UIStackView(arrangedSubviews: [monthLabel])
+        stackView.distribution = .equalCentering
+        stackView.axis = .vertical
+        
+        let width = monthLabel.frame.size.width
+        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
+        
+        self.navigationItem.title = self.monthAndYearString
+        self.navigationItem.titleView = stackView
+        
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(respondToMonthLabelTap))
+        tapRecognizer.numberOfTapsRequired = 1
+        stackView.addGestureRecognizer(tapRecognizer)
+        stackView.isUserInteractionEnabled = true
+    }
+    
+    override func viewDidLoad() {
+        self.loadTitle()
+        self.loadCategories()
     }
     
     // MARK: Select Month Delegate
     
     func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: Int?, year: Int?) {
-        if let newMonth = month, let newYear = year {
+        if let newMonth = month, let newYear = year, newMonth != self.month, newYear != self.year {
             self.monthAndYear = (newMonth, newYear)
         }
         selectMonthController.dismiss(animated: true, completion: nil)
@@ -106,30 +123,6 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         self.tableView.reloadData()
     }
     
-    // MARK: Load Title
-    
-    func loadTitle() {
-        let monthLabel = UILabel()
-        monthLabel.text = self.monthAndYearString
-        monthLabel.font = UIFont.boldSystemFont(ofSize: 17)
-        monthLabel.sizeToFit()
-        
-        let stackView = UIStackView(arrangedSubviews: [monthLabel])
-        stackView.distribution = .equalCentering
-        stackView.axis = .vertical
-        
-        let width = monthLabel.frame.size.width
-        stackView.frame = CGRect(x: 0, y: 0, width: width, height: 35)
-        
-        self.navigationItem.title = self.monthAndYearString
-        self.navigationItem.titleView = stackView
-        
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(respondToMonthLabelTap))
-        tapRecognizer.numberOfTapsRequired = 1
-        stackView.addGestureRecognizer(tapRecognizer)
-        stackView.isUserInteractionEnabled = true
-    }
-
     // MARK: UITableViewDelegate
 
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -168,13 +161,11 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         super.prepare(for: segue, sender: sender)
         
         if let individualCategoryViewController = segue.destination as? IndividualCategoryTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            individualCategoryViewController.monthAndYear = self.monthAndYear!
             if indexPath.section == 0 {
-                individualCategoryViewController.category = self.categories[indexPath.row]
+                individualCategoryViewController.setProperties(delegate: self, monthAndYear: self.monthAndYear, category: self.categories[indexPath.row])
             } else {
-                individualCategoryViewController.category = nil
+                individualCategoryViewController.setProperties(delegate: self, monthAndYear: self.monthAndYear, category: nil)
             }
-            individualCategoryViewController.delegate = self
         }
     }
     
@@ -185,7 +176,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let rootController = storyBoard.instantiateViewController(withIdentifier: "SelectMonthTableViewRootController") as! UINavigationController
             let selectMonthTableViewController = rootController.viewControllers[0] as! SelectMonthTableViewController
-            selectMonthTableViewController.delegate = self
+            selectMonthTableViewController.setProperties(delegate: self)
             self.present(rootController, animated: true, completion: nil)
         }
     }
@@ -194,7 +185,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let rootController = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewRootController") as! UINavigationController
         let addExpenseTableViewController = rootController.viewControllers[0] as! AddOrEditTransactionTableViewController
-        addExpenseTableViewController.addExpenseDelegate = self
+        addExpenseTableViewController.setProperties(delegate: self, categoryToSuggest: nil)
         self.present(rootController, animated: true, completion: nil)
     }
 }

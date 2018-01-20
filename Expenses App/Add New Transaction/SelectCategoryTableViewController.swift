@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SelectCategoryDelegate {
+protocol SelectCategoryDelegate: NSObjectProtocol {
     func didFinishSelecting(_ selectCategoryController: SelectCategoryTableViewController, category: String?)
 }
 
@@ -16,15 +16,16 @@ class SelectCategoryTableViewController: UITableViewController {
     
     // MARK: Properties
     
-    var addCategoryAlertActionSaveAction: UIAlertAction?
+    weak private var delegate: SelectCategoryDelegate?
     
-    var delegate: SelectCategoryDelegate?
+    private var addCategoryAlertActionSaveAction: UIAlertAction?
     
-    var categories: [String]!
+    private var categories: [String]!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
+    // MARK: Setup
+    
+    func setProperties(delegate: SelectCategoryDelegate) {
+        self.delegate = delegate
         self.categories = self.user.categories
     }
 

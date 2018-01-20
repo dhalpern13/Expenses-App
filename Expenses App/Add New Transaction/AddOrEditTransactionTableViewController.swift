@@ -8,12 +8,12 @@
 
 import UIKit
 
-protocol EditExpenseDelegate {
+protocol EditExpenseDelegate: NSObjectProtocol {
     
     func didFinishEditing(_ editExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?)
 }
 
-protocol AddExpenseDelegate {
+protocol AddExpenseDelegate: NSObjectProtocol {
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?)
 }
 
@@ -21,46 +21,39 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
 
     // MARK: Properties
     
-    var addExpenseDelegate: AddExpenseDelegate?
+    weak private var addExpenseDelegate: AddExpenseDelegate?
     
-    var editExpenseDelegate: EditExpenseDelegate?
+    weak private var editExpenseDelegate: EditExpenseDelegate? 
     
-    var numberFormatter = NumberFormatter()
+    private var numberFormatter = NumberFormatter()
     
-    var transactionToEdit: Transaction?
+    private var transactionToEdit: Transaction?
     
-    var categoryToSuggest: String?
-    
-    var date: Date! {
+    private var date: Date! {
         didSet {
             self.dateTableViewCell?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
         }
     }
     
-    var transactionDescriptionIsValid: Bool {
+    private var transactionDescriptionIsValid: Bool {
         get {
             return self.transactionDescription != nil && !self.transactionDescription!.isEmpty
         }
     }
     
-    var transactionDescription: String? {
+    private var transactionDescription: String? {
         didSet {
-            if self.transactionDescriptionIsValid {
-                self.descriptionTableViewCell?.textField.textColor = nil
-            } else {
-                self.descriptionTableViewCell?.textField.textColor = UIColor.lightGray
-            }
             self.updateSaveButtonState()
         }
     }
     
-    var categoryIsValid: Bool {
+    private var categoryIsValid: Bool {
         get {
             return self.category != nil && !self.category!.isEmpty
         }
     }
     
-    var category: String? {
+    private var category: String? {
         didSet {
             self.selectCategoryTableViewCell?.detailTextLabel?.text = self.category
             self.selectCategoryTableViewCell?.detailTextLabel?.textColor = nil
@@ -68,13 +61,13 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    var amountIsValid: Bool {
+    private var amountIsValid: Bool {
         get {
             return self.amount != nil && self.amount! > 0
         }
     }
     
-    var amount: Decimal? {
+    private var amount: Decimal? {
         didSet {
             if self.amount != nil {
                 self.amountTableViewCell?.amountTextEntry.text = self.currencyAmountFormatter.string(from: self.amount! as NSNumber)
@@ -87,19 +80,19 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    var dateTableViewCell: UITableViewCell? {
+    private var dateTableViewCell: UITableViewCell? {
         willSet {
             newValue?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
         }
     }
     
-    var datePickerVisible = false {
+    private var datePickerVisible = false {
         didSet {
             tableView.reloadSections([0], with: .automatic)
         }
     }
     
-    var datePickerTableViewCell: DatePickerTableViewCell? {
+    private var datePickerTableViewCell: DatePickerTableViewCell? {
         willSet {
             newValue?.datePicker.setDate(self.date, animated: false)
             newValue?.datePicker.maximumDate = Date()
@@ -107,7 +100,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    var amountTableViewCell: AmountTableViewCell? {
+    private var amountTableViewCell: AmountTableViewCell? {
         willSet {
             if self.amount != nil {
                 newValue?.amountTextEntry.text = self.currencyAmountFormatter.string(from: self.amount! as NSNumber)
@@ -117,7 +110,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    var descriptionTableViewCell: DescriptionTableViewCell? {
+    private var descriptionTableViewCell: DescriptionTableViewCell? {
         willSet {
             newValue?.textField.text = self.transactionDescription
             newValue?.textField.delegate = self
@@ -125,10 +118,37 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
     }
     
-    var selectCategoryTableViewCell: UITableViewCell? {
+    private var selectCategoryTableViewCell: UITableViewCell? {
         willSet {
             newValue?.detailTextLabel?.text = self.category
         }
+    }
+    
+    // MARK: Setup
+    
+    func setProperties(delegate: AddExpenseDelegate, categoryToSuggest: String?) {
+        guard self.editExpenseDelegate == nil else {
+            fatalError("AddOrEditTableViewController can be used for either editing an existing expense, or creating a new expense, not both.")
+        }
+        self.addExpenseDelegate = delegate
+        if categoryToSuggest != nil {
+            self.category = categoryToSuggest!
+        }
+        self.navigationItem.title = "New Expense"
+        self.date = Date()
+    }
+    
+    func setProperties(delegate: EditExpenseDelegate, transactionToEdit: Transaction) {
+        guard self.addExpenseDelegate == nil else {
+            fatalError("AddOrEditTableViewController can be used for either editing an existing expense, or creating a new expense, not both.")
+        }
+        self.editExpenseDelegate = delegate
+        self.transactionToEdit = transactionToEdit
+        self.navigationItem.title = ""
+        self.amount = transactionToEdit.amount
+        self.category = transactionToEdit.category
+        self.transactionDescription = transactionToEdit.descript
+        self.date = transactionToEdit.date
     }
     
     func updateSaveButtonState() {
@@ -151,26 +171,12 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardView))
         gestureRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(gestureRecognizer)
-        
-        if self.transactionToEdit == nil {
-            self.navigationItem.title = "New Expense"
-            self.date = Date()
-            if categoryToSuggest != nil {
-                self.category = self.categoryToSuggest!
-            }
-        } else {
-            self.navigationItem.title = ""
-            self.amount = transactionToEdit!.amount
-            self.category = transactionToEdit!.category
-            self.transactionDescription = transactionToEdit!.descript
-            self.date = transactionToEdit!.date
-        }
     }
     
     // MARK: Select Category Delegate
     
     func didFinishSelecting(_ selectCategoryController: SelectCategoryTableViewController, category: String?) {
-        if let newCategory = category {
+        if let newCategory = category, newCategory != self.category {
             self.category = newCategory
         }
         self.navigationController?.popViewController(animated: true)
@@ -289,7 +295,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         super.prepare(for: segue, sender: sender)
         
         if let selectCategoryTableViewController = segue.destination as? SelectCategoryTableViewController {
-            selectCategoryTableViewController.delegate = self
+            selectCategoryTableViewController.setProperties(delegate: self)
         }
     }
     
@@ -308,11 +314,8 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     }
     
     @IBAction func cancel(_ sender: Any) {
-        if self.transactionToEdit != nil {
-            self.editExpenseDelegate?.didFinishEditing(self, expense: nil)
-        } else {
-            self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
-        }
+        self.editExpenseDelegate?.didFinishEditing(self, expense: nil)
+        self.addExpenseDelegate?.didFinishAdding(self, expense: nil)
     }
     
     @IBAction func save(_ sender: Any) {

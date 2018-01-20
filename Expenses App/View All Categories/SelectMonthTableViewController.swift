@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol SelectMonthDelegate {
+protocol SelectMonthDelegate: NSObjectProtocol {
     func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: Int?, year: Int?)
 }
 
@@ -16,19 +16,28 @@ class SelectMonthTableViewController: UITableViewController {
     
     // MARK: Properties
     
-    var delegate: SelectMonthDelegate?
+    weak private var delegate: SelectMonthDelegate?
     
-    var startMonth: Int!
+    private var startMonth: Int {
+        get {
+            return self.user.earliestYearAndMonth.month
+        }
+    }
     
-    var startYear: Int!
+    private var startYear: Int {
+        get {
+            return self.user.earliestYearAndMonth.year
+        }
+    }
     
-    var currentMonth = Date().getMonthNum()
+    private var currentMonth = Date().getMonthNum()
     
-    var currentYear = Date().getYearNum()
+    private var currentYear = Date().getYearNum()
     
-    override func viewDidLoad() {
-        self.startMonth = self.user.earliestYearAndMonth.month
-        self.startYear = self.user.earliestYearAndMonth.year
+    // MARK: Setup
+    
+    func setProperties(delegate: SelectMonthDelegate) {
+        self.delegate = delegate
     }
 
     // MARK: UITableViewDelegate

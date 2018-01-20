@@ -8,7 +8,7 @@
 
 import UIKit
 
-protocol ViewCategoryDelegate {
+protocol ViewCategoryDelegate: NSObjectProtocol {
     func didFinishViewing(_ viewCategoryController: IndividualCategoryTableViewController)
 }
 
@@ -16,32 +16,38 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     
     // MARK: Properties
     
-    var delegate: ViewCategoryDelegate?
+    weak private var delegate: ViewCategoryDelegate?
     
-    var monthAndYear: (month: Int, year: Int)!
+    private var monthAndYear: (month: Int, year: Int)!
     
-    var transactions: [Transaction]!
-    
-    var month: Int {
+    private var month: Int {
         get {
             return self.monthAndYear!.month
         }
     }
     
-    var year: Int {
+    private var year: Int {
         get {
             return self.monthAndYear!.year
         }
     }
     
-    var category: String? {
-        didSet {
-            if self.category != nil {
-                self.transactions = self.user.getTransactionByCategory(self.category!, year: self.year, month: self.month)
-            } else {
-                self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
-            }
+    private var transactions: [Transaction]!
+    
+    private var category: String?
+    
+    // MARK: Setup
+    
+    func setProperties(delegate: ViewCategoryDelegate, monthAndYear: (Int, Int), category: String?) {
+        self.monthAndYear = monthAndYear
+        self.delegate = delegate
+        self.category = category
+        if self.category != nil {
+            self.transactions = self.user.getTransactionByCategory(self.category!, year: self.year, month: self.month)
             self.navigationItem.title = category
+        } else {
+            self.transactions = self.user.getTransactionsByYearAndMonth(year: self.year, month: self.month)
+            self.navigationItem.title = "All Expenses"
         }
     }
     
@@ -65,7 +71,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
             let originalIndexOfExpense = self.transactions.index(of: editedExpense)!
             let originalIndexPathOfExpense = IndexPath(row: originalIndexOfExpense, section: 0)
             
-            if editedExpense.date.getMonthNum() == self.month && editedExpense.date.getYearNum() == self.year {
+            if editedExpense.date.getMonthNum() == self.month && editedExpense.date.getYearNum() == self.year && (self.category == editedExpense.category || self.category == nil) {
                 // Sort based on the modified attributes of the expense, and then add it back into the tableview.
                 self.transactions.sort()
                 let newIndexOfExpense = self.transactions.index(of: editedExpense)!
@@ -78,6 +84,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
                 self.tableView.deleteRows(at: [originalIndexPathOfExpense], with: .none)
             }
         }
+        self.navigationController?.popViewController(animated: true)
     }
 
     // MARK: UITableView Delegate
@@ -116,13 +123,15 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         super.prepare(for: segue, sender: sender)
         
         if let editExpenseController = segue.destination as? AddOrEditTransactionTableViewController, let indexPath = tableView.indexPathForSelectedRow {
-            editExpenseController.transactionToEdit = self.transactions[indexPath.row]
-            editExpenseController.editExpenseDelegate = self
+            editExpenseController.setProperties(delegate: self, transactionToEdit: self.transactions[indexPath.row])
         }
     }
     
-    override func willMove(toParentViewController parent: UIViewController?) {
-        self.delegate?.didFinishViewing(self)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParentViewController {
+            self.delegate?.didFinishViewing(self)
+        }
     }
     
     // MARK: Action
@@ -131,8 +140,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let rootController = storyBoard.instantiateViewController(withIdentifier: "AddExpenseTableViewRootController") as! UINavigationController
         let addExpenseTableViewController = rootController.viewControllers[0] as! AddOrEditTransactionTableViewController
-        addExpenseTableViewController.addExpenseDelegate = self
-        addExpenseTableViewController.categoryToSuggest = self.category
+        addExpenseTableViewController.setProperties(delegate: self, categoryToSuggest: self.category)
         self.present(rootController, animated: true, completion: nil)
     }
 }
