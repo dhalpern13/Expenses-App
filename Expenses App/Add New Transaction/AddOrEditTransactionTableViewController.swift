@@ -32,6 +32,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     private var date: Date! {
         didSet {
             self.dateTableViewCell?.detailTextLabel?.text = self.dateFormatter.string(from: self.date)
+            self.updateSaveButtonState()
         }
     }
     
@@ -132,7 +133,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
         self.addExpenseDelegate = delegate
         if categoryToSuggest != nil {
-            self.category = categoryToSuggest!
+            self.category = categoryToSuggest
         }
         self.navigationItem.title = "New Expense"
         self.date = Date()
@@ -152,14 +153,34 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     }
     
     func updateSaveButtonState() {
-        if !self.categoryIsValid {
-            self.saveButton.isEnabled = false
-        } else if !self.amountIsValid {
-            self.saveButton.isEnabled = false
-        } else if !self.transactionDescriptionIsValid {
-            self.saveButton.isEnabled = false
+        if self.transactionToEdit != nil {
+            if !self.categoryIsValid {
+                self.saveButton.isEnabled = false
+            } else if !self.amountIsValid {
+                self.saveButton.isEnabled = false
+            } else if !self.transactionDescriptionIsValid {
+                self.saveButton.isEnabled = false
+            } else if self.category != self.transactionToEdit?.category {
+                self.saveButton.isEnabled = true
+            } else if self.amount != self.transactionToEdit?.amount {
+                self.saveButton.isEnabled = true
+            } else if self.transactionDescription != self.transactionToEdit?.descript {
+                self.saveButton.isEnabled = true
+            } else if self.date != self.transactionToEdit?.date {
+                self.saveButton.isEnabled = true
+            } else {
+                self.saveButton.isEnabled = false
+            }
         } else {
-            self.saveButton.isEnabled = true
+            if !self.categoryIsValid {
+                self.saveButton.isEnabled = false
+            } else if !self.amountIsValid {
+                self.saveButton.isEnabled = false
+            } else if !self.transactionDescriptionIsValid {
+                self.saveButton.isEnabled = false
+            } else {
+                self.saveButton.isEnabled = true
+            }
         }
     }
 
