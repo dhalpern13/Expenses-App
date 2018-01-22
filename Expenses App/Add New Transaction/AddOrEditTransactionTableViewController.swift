@@ -191,10 +191,6 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         super.viewDidLoad()
         
         self.saveButton.isEnabled = false
-        
-        let gestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboardView))
-        gestureRecognizer.cancelsTouchesInView = false
-        self.view.addGestureRecognizer(gestureRecognizer)
     }
     
     // MARK: Select Category Delegate
@@ -331,10 +327,6 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
     
     func handleTableDateTableViewCellTap() {
         self.datePickerVisible = !self.datePickerVisible
-    }
-    
-    @objc func dismissKeyboardView() {
-        view.endEditing(true)
     }
     
     @IBAction func cancel(_ sender: Any) {
