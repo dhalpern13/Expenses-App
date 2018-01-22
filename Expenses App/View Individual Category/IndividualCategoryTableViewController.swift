@@ -54,7 +54,7 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
     // MARK: Add Expense Delegate
     
     func didFinishAdding(_ addExpenseController: AddOrEditTransactionTableViewController, expense: Transaction?) {
-        if let newExpense = expense, newExpense.category == category, newExpense.date.getMonthNum() == self.month, newExpense.date.getYearNum() ==  self.year {
+        if let newExpense = expense, newExpense.category == self.category || self.category == nil, newExpense.date.getMonthNum() == self.month, newExpense.date.getYearNum() ==  self.year {
             self.transactions.append(newExpense)
             self.transactions.sort()
             let rowOfNewExpense = self.transactions.index(of: newExpense)!
@@ -78,7 +78,6 @@ class IndividualCategoryTableViewController: UITableViewController, AddExpenseDe
                 let newIndexPathOfExpense = IndexPath(row: newIndexOfExpense, section: 0)
                 self.tableView.moveRow(at: originalIndexPathOfExpense, to: newIndexPathOfExpense)
                 self.tableView.reloadRows(at: [newIndexPathOfExpense], with: .none)
-                self.navigationController?.popViewController(animated: true)
             } else {
                 self.transactions.remove(at: originalIndexOfExpense)
                 self.tableView.deleteRows(at: [originalIndexPathOfExpense], with: .none)

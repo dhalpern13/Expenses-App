@@ -17,9 +17,11 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
             return (currentDate.getMonthNum(), currentDate.getYearNum())
         }() {
         didSet {
-            self.loadCategories()
-            self.loadTitle()
-            self.tableView?.reloadData()
+            if oldValue.month != self.month || oldValue.year != self.year {
+                self.loadCategories()
+                self.loadTitle()
+                self.tableView?.reloadData()
+            }
         }
     }
     
@@ -87,7 +89,7 @@ class ViewAllCategoriesTableViewController: UITableViewController, SelectMonthDe
     // MARK: Select Month Delegate
     
     func didFinishSelecting(_ selectMonthController: SelectMonthTableViewController, month: Int?, year: Int?) {
-        if let newMonth = month, let newYear = year, newMonth != self.month, newYear != self.year {
+        if let newMonth = month, let newYear = year {
             self.monthAndYear = (newMonth, newYear)
         }
         selectMonthController.dismiss(animated: true, completion: nil)

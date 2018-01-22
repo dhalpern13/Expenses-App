@@ -18,6 +18,8 @@ class SelectCategoryTableViewController: UITableViewController {
     
     weak private var delegate: SelectCategoryDelegate?
     
+    private var addCategoryAlertController: UIAlertController?
+    
     private var addCategoryAlertActionSaveAction: UIAlertAction?
     
     private var categories: [String]!
@@ -53,18 +55,16 @@ class SelectCategoryTableViewController: UITableViewController {
     // MARK: Action
     
     @IBAction func handleAddCategory(_ sender: Any) {
-        let alertController = UIAlertController(title: "Enter a new category.", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "New Category.", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        self.addCategoryAlertController = alertController
         
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
         alertController.addAction(cancelAction)
         
         let addCategoryAction = UIAlertAction(title: "Save", style: UIAlertActionStyle.default, handler: { (action) in
             if let newCategory = alertController.textFields?[0].text {
-                let newRow = self.categories.count
-                let indexPath = IndexPath(row: newRow, section: 0)
                 self.user.addCategory(newCategory)
-                self.categories?.append(newCategory)
-                self.tableView.insertRows(at: [indexPath], with: .top)
+                self.delegate?.didFinishSelecting(self, category: newCategory)
             }
         })
         self.addCategoryAlertActionSaveAction = addCategoryAction
@@ -72,8 +72,12 @@ class SelectCategoryTableViewController: UITableViewController {
         alertController.addAction(addCategoryAction)
         
         alertController.addTextField(configurationHandler: { (textfield) in
-            textfield.placeholder = "Category"
             textfield.addTarget(self, action: #selector(self.handleTextFieldChange(_:)), for: .editingChanged)
+            textfield.addTarget(self, action: #selector(self.handleKeyboardDoneButtonPressWhenAddingNewCategory(_:)), for: .editingDidEndOnExit)
+            textfield.clearButtonMode = .whileEditing
+            textfield.returnKeyType = .done
+            textfield.enablesReturnKeyAutomatically = true
+            textfield.autocapitalizationType = .words
         })
         
         self.present(alertController, animated: true, completion: nil)
@@ -85,6 +89,11 @@ class SelectCategoryTableViewController: UITableViewController {
         } else {
             self.addCategoryAlertActionSaveAction?.isEnabled = false
         }
+    }
+    
+    @objc func handleKeyboardDoneButtonPressWhenAddingNewCategory(_ sender: UITextField) {
+        self.addCategoryAlertController?.dismiss(animated: true, completion: nil)
+        self.delegate?.didFinishSelecting(self, category: sender.text)
     }
     
     @IBAction func handleCancel(_ sender: Any) {

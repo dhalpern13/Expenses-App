@@ -148,7 +148,7 @@ class AddOrEditTransactionTableViewController: UITableViewController, UITextFiel
         }
         self.editExpenseDelegate = delegate
         self.transactionToEdit = transactionToEdit
-        self.navigationItem.title = ""
+        self.navigationItem.title = "Edit Expense"
         self.amount = transactionToEdit.amount
         self.category = transactionToEdit.category
         self.transactionDescription = transactionToEdit.descript
