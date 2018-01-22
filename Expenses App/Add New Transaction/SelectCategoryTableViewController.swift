@@ -55,7 +55,7 @@ class SelectCategoryTableViewController: UITableViewController {
     // MARK: Action
     
     @IBAction func handleAddCategory(_ sender: Any) {
-        let alertController = UIAlertController(title: "New Category.", message: nil, preferredStyle: UIAlertControllerStyle.alert)
+        let alertController = UIAlertController(title: "New Category", message: nil, preferredStyle: UIAlertControllerStyle.alert)
         self.addCategoryAlertController = alertController
         
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.cancel, handler: nil)
