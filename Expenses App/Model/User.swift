@@ -15,6 +15,7 @@ class User: Codable {
     var categories : [String] = []
     var earliestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
     var latestYearAndMonth : (year: Int, month: Int) = (Date().getYearNum(), Date().getMonthNum());
+    var descriptions = DescriptionStorer()
     
     init(){}
     
@@ -77,6 +78,7 @@ class User: Codable {
             }
             self.latestYearAndMonth.year = year;
         }
+        descriptions.addWord(transaction.descript)
     }
     
     func removeTransaction(_ transaction: Transaction) {
@@ -85,6 +87,7 @@ class User: Codable {
         if self.transactions[year]?[month] != nil {
             self.transactions[year]![month]! = self.transactions[year]![month]!.filter() {$0 !== transaction}
         }
+        descriptions.deleteWord(transaction.descript)
     }
     
     func editTransaction(_ transaction: Transaction, date: Date, descript: String, amount: Decimal, category: String) {
@@ -163,4 +166,65 @@ class User: Codable {
     
     static let DocumentsDirectory = FileManager().urls(for: .documentDirectory, in: .userDomainMask).first!
     static let ArchiveURL = DocumentsDirectory.appendingPathComponent("user")
+}
+
+class DescriptionStorer {
+    var lowerNodes : [Character:DescriptionStorer] = [:]
+    var maxWord = ""
+    var maxNumber : Int = 0
+    private var myWordNumber : Int = 0
+    
+    func biggestEndingStartingWith(_ str: String) -> String {
+        if(str.isEmpty) {
+            return self.maxWord
+        } else {
+            var strcopy = str
+            let char = strcopy.removeFirst()
+            if(self.lowerNodes[char] == nil) {
+                return ""
+            } else {
+                return self.lowerNodes[char]!.biggestEndingStartingWith(strcopy)
+            }
+        }
+    }
+    
+    func addWord(_ word : String) {
+        self.changeWord(word, amount: 1)
+    }
+    
+    func deleteWord(_ word : String) {
+        self.changeWord(word, amount: -1)
+    }
+    
+    private func updateMax() {
+        var max = self.myWordNumber
+        var word = ""
+        for (char, node) in self.lowerNodes {
+            if(node.maxNumber >= max) {
+                max = node.maxNumber
+                word = String(char) + node.maxWord
+            }
+        }
+        print(word)
+        self.maxNumber = max
+        self.maxWord = word
+    }
+    
+    private func changeWord(_ word : String, amount : Int) {
+        if(word.isEmpty) {
+            self.myWordNumber += amount
+            if(self.myWordNumber < 0) {
+                myWordNumber = 0
+            }
+        } else {
+            var wordCopy = word
+            let char = wordCopy.removeFirst()
+            if(self.lowerNodes[char] == nil) {
+                self.lowerNodes[char] = DescriptionStorer()
+            }
+            self.lowerNodes[char]!.addWord(wordCopy)
+        }
+        self.updateMax()
+    }
+    
 }
